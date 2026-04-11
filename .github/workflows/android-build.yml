@@ -28,14 +28,13 @@ jobs:
 
       - name: Create Keystore file
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > my-release-key.keystore
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android.keystore
 
       - name: Build AAB using Bubblewrap
         run: |
           npm install -g @bubblewrap/cli
           bubblewrap doctor --jdkPath "$JAVA_HOME" --androidSdkPath "$ANDROID_HOME"
-          printf "n\nn\n\n\n\n\n\n\n\n\n\n\n\n\n\n" | bubblewrap init --manifest https://app-igreja-red.vercel.app/manifest.json
-          bubblewrap build --signingKeyPath my-release-key.keystore --signingKeyAlias "${{ secrets.ANDROID_KEY_ALIAS }}" --signingKeyPassword "${{ secrets.ANDROID_KEY_PASSWORD }}" --keyStorePassword "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --skip-directory-check
+          bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "${{ secrets.ANDROID_KEY_PASSWORD }}" --keyStorePassword "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --skip-directory-check
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
