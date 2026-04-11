@@ -7,7 +7,7 @@
   "themeColor": "#0f172a",
   "navigationColor": "#0a0c10",
   "background_color": "#0a0c10",
-  "startUrl": "/?source=pwa",
+  "startUrl": "https://app-igreja-red.vercel.app/",
   "iconUrl": "https://app-igreja-red.vercel.app/icon-512.png",
   "maskableIconUrl": "https://app-igreja-red.vercel.app/icon-512.png",
   "appVersion": "1.0.0",
