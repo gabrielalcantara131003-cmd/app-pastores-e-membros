@@ -28,7 +28,7 @@ jobs:
             -w /workdir \
             --entrypoint /bin/bash \
             ghcr.io/googlechromelabs/bubblewrap:latest \
-            -c "yes | bubblewrap init --manifest https://app-igreja-red.vercel.app/manifest.json && bubblewrap build --signingKeyPath my-release-key.keystore --signingKeyAlias \"${{ secrets.ANDROID_KEY_ALIAS }}\" --signingKeyPassword \"${{ secrets.ANDROID_KEY_PASSWORD }}\" --keyStorePassword \"${{ secrets.ANDROID_KEYSTORE_PASSWORD }}\" --skip-directory-check"
+            -c "printf \"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\" | bubblewrap init --manifest https://app-igreja-red.vercel.app/manifest.json && bubblewrap build --signingKeyPath my-release-key.keystore --signingKeyAlias \"${{ secrets.ANDROID_KEY_ALIAS }}\" --signingKeyPassword \"${{ secrets.ANDROID_KEY_PASSWORD }}\" --keyStorePassword \"${{ secrets.ANDROID_KEYSTORE_PASSWORD }}\" --skip-directory-check"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
