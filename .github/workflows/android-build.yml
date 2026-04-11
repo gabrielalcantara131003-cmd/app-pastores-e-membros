@@ -17,18 +17,24 @@ jobs:
         with:
           node-version: 20
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Create Keystore file
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > my-release-key.keystore
 
       - name: Build AAB using Bubblewrap
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/workdir \
-            -w /workdir \
-            --entrypoint /bin/bash \
-            ghcr.io/googlechromelabs/bubblewrap:latest \
-            -c "printf \"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\" | bubblewrap init --manifest https://app-igreja-red.vercel.app/manifest.json && bubblewrap build --signingKeyPath my-release-key.keystore --signingKeyAlias \"${{ secrets.ANDROID_KEY_ALIAS }}\" --signingKeyPassword \"${{ secrets.ANDROID_KEY_PASSWORD }}\" --keyStorePassword \"${{ secrets.ANDROID_KEYSTORE_PASSWORD }}\" --skip-directory-check"
+          npm install -g @bubblewrap/cli
+          yes | bubblewrap init --manifest https://app-igreja-red.vercel.app/manifest.json
+          bubblewrap build --signingKeyPath my-release-key.keystore --signingKeyAlias "${{ secrets.ANDROID_KEY_ALIAS }}" --signingKeyPassword "${{ secrets.ANDROID_KEY_PASSWORD }}" --keyStorePassword "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --skip-directory-check
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
