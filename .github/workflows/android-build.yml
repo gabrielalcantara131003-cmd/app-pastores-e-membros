@@ -27,8 +27,10 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Create Keystore file
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | tr -d '\n ' | base64 --decode > android.keystore
+          echo "$KEYSTORE_BASE64" | tr -d '\n\r\t ' | base64 -d -i > android.keystore
 
       - name: Build AAB using Bubblewrap
         run: |
