@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="App Ministerial — Plataforma cristã moderna para pastores, líderes e membros de igrejas. Gestão, estudo bíblico, Harpa Cristã, escola dominical e muito mais.">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta property="og:title" content="Pastores E Membros — Plataforma para sua igreja">
+  <meta property="og:description" content="Gestão de membros, estudo bíblico, Harpa Cristã, escola dominical e apoio ao culto em um só lugar.">
+  <meta property="og:type" content="website">
+  
+  <!-- PWA Tags -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <title>App Ministerial — Plataforma para sua igreja</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="bento-styles.css">
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('ServiceWorker registered!', reg);
+        }).catch(err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  </script>
+</head>
+<body>
+
+<!-- ============ TELA DE LOGIN / CADASTRO ============ -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-container bento-auth-container">
+    <div class="auth-brand">
+      <div class="auth-brand-logo">M</div>
+      <h1>App Ministerial</h1>
+      <p>A plataforma completa para sua igreja</p>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="showAuthTab('login')">Entrar</button>
+        <button class="auth-tab" onclick="showAuthTab('cadastro')">Criar Conta</button>
+      </div>
+
+      <div class="auth-error" id="authError"></div>
+
+            <!-- FORM: LOGIN -->
+      <form class="auth-form active" id="formLogin" onsubmit="handleLogin(event)">
+        <div class="form-group form-group-bento">
+          <label class="form-label"><i data-lucide="mail"></i> E-mail</label>
+          <input class="form-input" type="email" id="loginEmail" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group form-group-bento">
+          <label class="form-label"><i data-lucide="lock"></i> Senha</label>
+          <div class="password-wrapper">
+            <input class="form-input" type="password" id="loginSenha" placeholder="Sua senha" required minlength="6">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginSenha', this)"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+        <button type="submit" class="auth-btn btn-bento-primary" id="btnLogin">Acessar Plataforma</button>
+      </form>
+
+      <!-- FORM: CADASTRO -->
+      <form class="auth-form" id="formCadastro" onsubmit="handleCadastro(event)">
+        <div class="form-group form-group-bento">
+          <label class="form-label"><i data-lucide="user"></i> Nome Completo</label>
+          <input class="form-input" type="text" id="cadNome" placeholder="Digite seu nome" required>
+        </div>
+        <div class="form-group form-group-bento">
+          <label class="form-label"><i data-lucide="mail"></i> E-mail</label>
+          <input class="form-input" type="email" id="cadEmail" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group form-group-bento">
+          <label class="form-label"><i data-lucide="lock"></i> Senha Segura</label>
+          <div class="password-wrapper">
+            <input class="form-input" type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" required minlength="6" oninput="updatePasswordStrength(this.value)">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cadSenha', this)"><i data-lucide="eye"></i></button>
+          </div>
+          <div class="password-strength" id="passwordStrength">
+            <div class="strength-bars">
+              <div class="strength-bar" id="strengthBar1"></div>
+              <div class="strength-bar" id="strengthBar2"></div>
+              <div class="strength-bar" id="strengthBar3"></div>
+              <div class="strength-bar" id="strengthBar4"></div>
+            </div>
+            <div class="strength-label" id="strengthLabel"></div>
+          </div>
+        </div>
+        <div class="form-group form-group-bento">
+          <label class="form-label"><i data-lucide="church"></i> Organização (Igreja)</label>
+          <input class="form-input" type="text" id="cadIgreja" placeholder="Nome da Igreja" required>
+        </div>
+        <div class="form-group form-group-bento">
+          <label class="form-label"><i data-lucide="shield"></i> Nível de Acesso</label>
+          <select class="form-input bento-select" id="cadPerfil">
+            <option value="pastor">Pastor / Líder (Acesso Total)</option>
+            <option value="membro">Membro (Modo Simplificado)</option>
+          </select>
+        </div>
+        <button type="submit" class="auth-btn btn-bento-primary" id="btnCadastro">Criar Conta</button>
+      </form>
+    </div>
+
+    <div class="auth-toggle" id="authToggleText">
+      Não tem conta? <a onclick="showAuthTab('cadastro')">Crie agora</a>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- ============ HEADER PRINCIPAL ============ -->
+  <header class="app-header" id="mainHeader">
+    <div class="header-brand">
+      <div class="header-logo" id="headerLogoIcon">M</div>
+      <div>
+        <div class="header-title" id="headerAppTitle">Ministerial</div>
+        <div class="header-church-name" id="headerChurchName">Plataforma da Igreja</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" onclick="openGlobalSearch()" aria-label="Buscar"><i data-lucide="search"></i></button>
+      <button class="header-btn" onclick="navigateTo('perfil')" aria-label="Perfil"><i data-lucide="user"></i></button>
+    </div>
+  </header>
+
+  <!-- ============ SUB HEADER ============ -->
+  <header class="sub-header" id="subHeader" style="display:none">
+    <button class="btn-back" onclick="goBack()" aria-label="Voltar">←</button>
+    <div class="sub-header-title" id="subHeaderTitle"></div>
+    <div class="sub-header-actions" id="subHeaderActions"></div>
+  </header>
+
+  <!-- ======== OVERLAY: ZOOM CARTEIRINHA ======== -->
+  <div id="carteirinhaZoom" class="zoom-overlay" onclick="closeCarteirinhaZoom()">
+    <button class="zoom-close" onclick="closeCarteirinhaZoom()"><i data-lucide="x"></i></button>
+    <img id="zoomImg" src="" alt="Carteirinha Expandida">
+  </div>
+
+  <!-- ======== MODAIS ======== -->
+  <div class="screen active" id="screen-inicio">
+    <div class="page-content">
+
+      <div class="greeting">
+        <div class="greeting-hello">Olá, bem-vindo <i data-lucide="hand"></i></div>
+        <div class="greeting-name" id="greetingName">Pastor <span>João</span></div>
+      </div>
+
+      <!-- Versículo do dia -->
+      <div class="verse-card hero-verse-card" id="verseDia" style="margin-bottom:var(--sp-6)">
+        <div class="verse-label">✦ Versículo do dia</div>
+        <div class="verse-text" id="verseText"></div>
+        <div class="verse-ref" id="verseRef"></div>
+      </div>
+
+      <!-- Bento Dashboard -->
+      <div class="bento-grid">
+        
+        <!-- Estatísticas Bento (Pastor) -->
+        <div class="bento-item bento-stats" data-role="pastor">
+          <div class="bento-stat-box">
+            <div class="bento-stat-icon"><i data-lucide="users"></i></div>
+            <div class="bento-stat-content">
+              <div class="stat-number" id="statMembros">0</div>
+              <div class="stat-label">Membros</div>
+            </div>
+          </div>
+          <div class="bento-stat-divider"></div>
+          <div class="bento-stat-box">
+            <div class="bento-stat-icon"><i data-lucide="pen-tool"></i></div>
+            <div class="bento-stat-content">
+              <div class="stat-number" id="statSermoes">0</div>
+              <div class="stat-label">Sermões</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acesso Rápido Bento -->
+        <div class="bento-actions-grid">
+          
+          <div class="bento-card bento-feature" onclick="showScreen('biblia')">
+            <div class="bento-card-bg blur-gold"></div>
+            <div class="bento-card-header">
+              <div class="bento-icon gold-icon"><i data-lucide="book-open"></i></div>
+              <div class="bento-arrow"><i data-lucide="arrow-up-right"></i></div>
+            </div>
+            <div class="bento-card-body">
+              <h3>Bíblia Digital</h3>
+              <p>Áudio & Leitura</p>
+            </div>
+          </div>
+
+          <div class="bento-card bento-feature" onclick="showScreen('harpa')">
+            <div class="bento-card-bg blur-violet"></div>
+            <div class="bento-card-header">
+              <div class="bento-icon violet-icon"><i data-lucide="music"></i></div>
+              <div class="bento-arrow"><i data-lucide="arrow-up-right"></i></div>
+            </div>
+            <div class="bento-card-body">
+              <h3>Harpa Cristã</h3>
+              <p>Letras e Cifras</p>
+            </div>
+          </div>
+
+          <div class="bento-card bento-admin" onclick="navigateTo('membros')" data-role="pastor">
+            <div class="bento-card-bg blur-blue"></div>
+            <div class="bento-card-header">
+              <div class="bento-icon"><i data-lucide="users-round"></i></div>
+            </div>
+            <div class="bento-card-body">
+              <h3>Gestão</h3>
+              <p>Membros</p>
+            </div>
+          </div>
+
+          <div class="bento-card bento-admin" onclick="showScreen('tesouraria')" data-role="pastor">
+            <div class="bento-card-bg blur-emerald"></div>
+            <div class="bento-card-header">
+              <div class="bento-icon"><i data-lucide="wallet"></i></div>
+            </div>
+            <div class="bento-card-body">
+              <h3>Tesouraria</h3>
+              <p>Dízimos & Ofertas</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Continue de onde parou -->
+      <div class="section-label">Continue de onde parou</div>
+      <div class="continue-card" onclick="navigateTo('escola')">
+        <div style="font-size:1.5rem"><i data-lucide="file-text"></i></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:var(--fs-sm);font-weight:700;color:var(--navy)">Escola Dominical</div>
+          <div style="font-size:var(--fs-xs);color:var(--gray-500)">O Fruto do Espírito: Benignidade e Bondade</div>
+        </div>
+        <div style="color:var(--gray-300);font-size:0.9rem">→</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======== TELA: MEMBROS ======== -->
+  <div class="screen" id="screen-membros">
+    <div class="page-content">
+      <div class="section-label">
+        Membros da Igreja
+        <span class="section-action" id="membroCount"></span>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon"><i data-lucide="search"></i></span>
+        <input type="text" placeholder="Buscar por nome ou cargo..." id="searchMembros" oninput="filterMembros()">
+      </div>
+      <div class="filter-chips">
+        <button class="chip active" onclick="filterStatus(this,'todos')">Todos</button>
+        <button class="chip" onclick="filterStatus(this,'ativo')">Ativos</button>
+        <button class="chip" onclick="filterStatus(this,'inativo')">Inativos</button>
+      </div>
+      <div id="membrosLista"></div>
+    </div>
+    <button class="fab" onclick="openAddMembro()" aria-label="Adicionar membro">+</button>
+  </div>
+
+  <!-- ======== TELA: ESTUDO ======== -->
+  <div class="screen" id="screen-estudo">
+    <div class="page-content">
+      <div class="module-hero">
+        <div class="module-hero-icon"><i data-lucide="book-open"></i></div>
+        <div class="module-hero-text">
+          <h2>Ferramentas de Estudo</h2>
+          <p>Bíblia, sermões, dicionário e cerimonial para seu ministério</p>
+        </div>
+      </div>
+
+      <div class="module-card" onclick="showScreen('biblia')">
+        <div class="module-card-icon premium-icon-wrap"><i data-lucide="book-open"></i></div>
+        <div class="module-card-content">
+          <div class="module-card-title">Bíblia em Áudio</div>
+          <div class="module-card-desc">Ouça a Palavra de Deus — 66 livros</div>
+        </div>
+        <span class="module-card-arrow">→</span>
+      </div>
+
+      <div class="module-card" onclick="showScreen('sermao')" data-role="pastor">
+        <div class="module-card-icon premium-icon-wrap"><i data-lucide="pen-tool"></i></div>
+        <div class="module-card-content">
+          <div class="module-card-title">Pesquisa para Sermão</div>
+          <div class="module-card-desc">Crie e organize esboços de pregação</div>
+        </div>
+        <span class="module-card-arrow">→</span>
+      </div>
+
+      <div class="module-card" onclick="showScreen('dicionario')">
+        <div class="module-card-icon premium-icon-wrap"><i data-lucide="library"></i></div>
+        <div class="module-card-content">
+          <div class="module-card-title">Dicionário Bíblico</div>
+          <div class="module-card-desc">Consulta rápida de termos e conceitos</div>
+        </div>
+        <span class="module-card-arrow">→</span>
+      </div>
+
+      <div class="module-card" onclick="showScreen('cerimonial')" data-role="pastor">
+        <div class="module-card-icon premium-icon-wrap"><i data-lucide="clipboard-list"></i></div>
+        <div class="module-card-content">
+          <div class="module-card-title">Cerimonial Bíblico</div>
+          <div class="module-card-desc">Roteiros para cerimônias ministeriais</div>
+        </div>
+        <span class="module-card-arrow">→</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: CULTO ======== -->
+  <div class="screen" id="screen-culto">
+    <div class="page-content">
+      <div class="module-hero">
+        <div class="module-hero-icon"><i data-lucide="music"></i></div>
+        <div class="module-hero-text">
+          <h2>Apoio ao Culto</h2>
+          <p>Harpa Cristã, cerimonial e leitura bíblica para o momento do culto</p>
+        </div>
+      </div>
+
+      <div class="module-card" onclick="showScreen('harpa')">
+        <div class="module-card-icon premium-icon-wrap"><i data-lucide="music"></i></div>
+        <div class="module-card-content">
+          <div class="module-card-title">Harpa Cristã</div>
+          <div class="module-card-desc">Hinos com letra e áudio</div>
+        </div>
+        <span class="module-card-arrow">→</span>
+      </div>
+
+      <div class="module-card" onclick="showScreen('cerimonial')" data-role="pastor">
+        <div class="module-card-icon premium-icon-wrap"><i data-lucide="clipboard-list"></i></div>
+        <div class="module-card-content">
+          <div class="module-card-title">Cerimonial Bíblico</div>
+          <div class="module-card-desc">Roteiros para Santa Ceia, Batismo e mais</div>
+        </div>
+        <span class="module-card-arrow">→</span>
+      </div>
+
+      <div class="module-card" onclick="showScreen('biblia')">
+        <div class="module-card-icon premium-icon-wrap"><i data-lucide="book-open"></i></div>
+        <div class="module-card-content">
+          <div class="module-card-title">Bíblia em Áudio</div>
+          <div class="module-card-desc">Leitura bíblica para o culto</div>
+        </div>
+        <span class="module-card-arrow">→</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: BÍBLIA ======== -->
+  <div class="screen" id="screen-biblia">
+    <div class="page-content">
+      <div class="tabs" id="bibliaTabs">
+        <button class="tab active" onclick="showBibleTab('livros',this)">Livros</button>
+        <button class="tab" onclick="showBibleTab('player',this)">Player</button>
+        <button class="tab" onclick="showBibleTab('favoritos-biblia',this)">Favoritos</button>
+      </div>
+      <div id="bible-livros">
+        <div class="search-bar">
+          <span class="search-icon"><i data-lucide="search"></i></span>
+          <input type="text" placeholder="Buscar livro..." id="searchBiblia" oninput="filterBiblia()">
+        </div>
+        <div class="filter-chips">
+          <button class="chip active" onclick="filterTestamento(this,'todos')">Todos</button>
+          <button class="chip" onclick="filterTestamento(this,'antigo')">Antigo Testamento</button>
+          <button class="chip" onclick="filterTestamento(this,'novo')">Novo Testamento</button>
+        </div>
+        <div id="bibliaLivros" class="bible-book-grid"></div>
+      </div>
+      <div id="bible-capitulos" style="display:none">
+        <div style="margin-bottom:var(--sp-4);display:flex;align-items:center;gap:var(--sp-3)">
+          <button class="btn-back" onclick="showBibleBooks()" style="width:32px;height:32px;font-size:1rem">←</button>
+          <span style="font-weight:700;color:var(--navy);font-size:var(--fs-md)" id="selectedBookName"></span>
+        </div>
+        <div id="bibliaCapitulos" class="chapter-grid"></div>
+      </div>
+      <div id="bible-player" style="display:none">
+        <audio id="bibleAudio" preload="metadata"></audio>
+        <audio id="bgMusicAudio" preload="metadata" loop></audio>
+        <div class="audio-player">
+          <div class="player-info">
+            <div class="player-book" id="playerBook">Selecione um livro</div>
+            <div class="player-chapter" id="playerChapter">Escolha um capítulo para ouvir</div>
+          </div>
+          <div class="player-progress" id="playerProgressWrap" onclick="seekAudio(event)">
+            <div class="player-progress-bar" id="progressBar"></div>
+            <div class="player-scrubber" id="playerScrubber"></div>
+          </div>
+          <div class="player-times">
+            <span id="playerCurrentTime">0:00</span>
+            <span id="playerDuration">--:--</span>
+          </div>
+          <div class="player-controls">
+            <button class="player-btn" onclick="skipAudio(-10)" title="Voltar 10s">
+              <span style="font-size:0.65rem;font-weight:800;line-height:1">10</span>
+              <span style="font-size:0.8rem">⟲</span>
+            </button>
+            <button class="player-btn-main" id="btnPlayBible" onclick="togglePlay()">▶</button>
+            <button class="player-btn" onclick="skipAudio(10)" title="Avançar 10s">
+              <span style="font-size:0.8rem">⟳</span>
+              <span style="font-size:0.65rem;font-weight:800;line-height:1">10</span>
+            </button>
+          </div>
+          <div class="player-speed-row">
+            <span class="player-speed-label">Velocidade</span>
+            <div class="player-speed-btns">
+              <button class="speed-btn" onclick="setPlaybackSpeed(0.75,this)">0.75x</button>
+              <button class="speed-btn active" onclick="setPlaybackSpeed(1,this)">1x</button>
+              <button class="speed-btn" onclick="setPlaybackSpeed(1.25,this)">1.25x</button>
+              <button class="speed-btn" onclick="setPlaybackSpeed(1.5,this)">1.5x</button>
+              <button class="speed-btn" onclick="setPlaybackSpeed(2,this)">2x</button>
+            </div>
+          </div>
+          <!-- Música Ambiente de Fundo -->
+          <div class="bg-music-section" id="bgMusicSection">
+            <div class="bg-music-header">
+              <div class="bg-music-info">
+                <span class="bg-music-icon">🎵</span>
+                <span class="bg-music-label">Música Ambiente</span>
+              </div>
+              <button class="bg-music-toggle" id="bgMusicToggle" onclick="toggleBgMusic()" title="Ativar/Desativar música de fundo">
+                <span class="bg-toggle-track">
+                  <span class="bg-toggle-thumb"></span>
+                </span>
+              </button>
+            </div>
+            <div class="bg-music-controls" id="bgMusicControls" style="display:none">
+              <div class="bg-music-vol-row">
+                <span class="bg-vol-icon">🔈</span>
+                <input type="range" class="bg-music-volume" id="bgMusicVolume" min="0" max="100" value="15" oninput="setBgMusicVolume(this.value)">
+                <span class="bg-vol-icon">🔊</span>
+              </div>
+              <div class="bg-music-status" id="bgMusicStatus">Chuva suave · Volume 15%</div>
+            </div>
+          </div>
+        </div>
+        <div id="playerLoadingState" style="display:none;text-align:center;padding:var(--sp-4);color:var(--gray-500);font-size:var(--fs-xs)">
+          <div class="loading-dots">Carregando áudio<span>.</span><span>.</span><span>.</span></div>
+        </div>
+        <div style="margin-top:var(--sp-6)">
+          <div class="section-label">Ouvidos recentemente</div>
+          <div id="recentlyPlayedList">
+            <div class="empty-state" style="padding:var(--sp-6)">
+              <div class="empty-icon"><i data-lucide="book-open"></i></div>
+              <div class="empty-title">Nenhum histórico</div>
+              <div class="empty-text">Selecione um livro e capítulo para começar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="bible-favoritos-biblia" style="display:none">
+        <div class="empty-state">
+          <div class="empty-icon"><i data-lucide="star"></i></div>
+          <div class="empty-title">Sem favoritos ainda</div>
+          <div class="empty-text">Marque capítulos como favoritos para acesso rápido</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: SERMÃO ======== -->
+  <div class="screen" id="screen-sermao">
+    <div class="page-content">
+      <div class="tabs" id="sermaoTabs">
+        <button class="tab active" onclick="showSermaoTab('meus',this)">Meus Sermões</button>
+        <button class="tab" onclick="showSermaoTab('ia',this)">🤖 Assistente IA</button>
+        <button class="tab" onclick="showSermaoTab('salvos',this)"><i data-lucide="clipboard-list"></i> Esboços</button>
+      </div>
+
+      <!-- ABA: Meus Sermões -->
+      <div id="sermaoTab-meus">
+        <div class="search-bar">
+          <span class="search-icon"><i data-lucide="search"></i></span>
+          <input type="text" placeholder="Buscar sermão..." id="searchSermao" oninput="filterSermoes()">
+        </div>
+        <div id="sermoesLista"></div>
+      </div>
+
+      <!-- ABA: Assistente IA -->
+      <div id="sermaoTab-ia" style="display:none">
+        <div class="ia-hero">
+          <div class="ia-hero-icon">🤖</div>
+          <div class="ia-hero-text">
+            <h2>Assistente de Pregação</h2>
+            <p>Preencha os campos abaixo e gere um esboço estruturado com referências bíblicas para seu sermão.</p>
+          </div>
+        </div>
+
+        <!-- Contador Freemium -->
+        <div class="ia-usage-bar hidden" id="iaUsageBar">
+
+          <div class="ia-usage-info">
+            <span class="ia-usage-icon"><i data-lucide="sparkles"></i></span>
+            <span id="iaUsageText">3 gerações restantes este mês</span>
+          </div>
+          <button class="ia-upgrade-btn" onclick="openPremiumModal()"><i data-lucide="crown"></i> Premium</button>
+        </div>
+
+        <div class="ia-form-card">
+          <div class="form-group">
+            <label class="form-label">📌 Tema da Pregação *</label>
+            <input class="form-input" id="iaTema" placeholder="Ex: A fé que move montanhas, O perdão de Deus..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i data-lucide="book-open"></i> Versículo Base (opcional)</label>
+            <input class="form-input" id="iaVersiculo" placeholder="Ex: Hebreus 11:1, João 3:16...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">🎯 Objetivo da Pregação</label>
+            <div class="ia-obj-chips">
+              <button class="ia-obj-chip active" onclick="selectObjetivo(this,'Consolo')">💛 Consolo</button>
+              <button class="ia-obj-chip" onclick="selectObjetivo(this,'Exortação')">🔥 Exortação</button>
+              <button class="ia-obj-chip" onclick="selectObjetivo(this,'Evangelismo')">🌍 Evangelismo</button>
+              <button class="ia-obj-chip" onclick="selectObjetivo(this,'Ensino')"><i data-lucide="book-open"></i> Ensino</button>
+              <button class="ia-obj-chip" onclick="selectObjetivo(this,'Encorajamento')">💪 Encorajamento</button>
+              <button class="ia-obj-chip" onclick="selectObjetivo(this,'Adoração')">🙏 Adoração</button>
+            </div>
+          </div>
+
+          <!-- Seletor de Tempo de Pregação -->
+          <div class="form-group">
+            <label class="form-label"><i data-lucide="clock"></i> Tempo de Pregação</label>
+            <div class="ia-duration-chips">
+              <button class="ia-duration-chip" onclick="selectDuracao(this, 20)">20 min</button>
+              <button class="ia-duration-chip active" onclick="selectDuracao(this, 40)">40 min</button>
+              <button class="ia-duration-chip" onclick="selectDuracao(this, 60)">60 min</button>
+            </div>
+          </div>
+
+          <!-- Toggle Perguntas para Células -->
+          <div class="form-group">
+            <label class="ia-toggle-row">
+              <div class="ia-toggle-info">
+                <span class="ia-toggle-label"><i data-lucide="message-circle"></i> Perguntas para Células</span>
+                <span class="ia-toggle-desc">Gerar perguntas de reflexão para pequenos grupos</span>
+              </div>
+              <div class="ia-toggle-switch">
+                <input type="checkbox" id="iaGerarPerguntas" class="ia-toggle-input">
+                <span class="ia-toggle-slider"></span>
+              </div>
+            </label>
+          </div>
+
+          <button class="btn-ia-gerar" id="btnGerarIA" onclick="gerarEsbocoIA()">
+            <span class="ia-btn-icon"><i data-lucide="sparkles"></i></span>
+            <span class="ia-btn-text">Gerar Esboço com IA</span>
+          </button>
+        </div>
+
+        <!-- Resultado da IA -->
+        <div id="iaResultado" style="display:none"></div>
+      </div>
+
+      <!-- ABA: Esboços Salvos -->
+      <div id="sermaoTab-salvos" style="display:none">
+        <div id="esbocosSalvosLista"></div>
+      </div>
+
+    </div>
+    <button class="fab" onclick="openAddSermao()" aria-label="Novo sermão">+</button>
+  </div>
+
+  <!-- ======== TELA: DETALHE SERMÃO ======== -->
+  <div class="screen" id="screen-sermao-detalhe">
+    <div class="page-content" id="sermaoDetalheContent"></div>
+  </div>
+
+  <!-- ======== TELA: DETALHE ESBOÇO IA ======== -->
+  <div class="screen" id="screen-esboco-detalhe">
+    <div class="page-content" id="esbocoDetalheContent"></div>
+  </div>
+
+  <!-- ======== TELA: CERIMONIAL ======== -->
+  <div class="screen" id="screen-cerimonial">
+    <div class="page-content">
+      <div class="search-bar">
+        <span class="search-icon"><i data-lucide="search"></i></span>
+        <input type="text" placeholder="Buscar cerimônia..." id="searchCerimonial" oninput="filterCerimonial()">
+      </div>
+      <div id="cerimonialLista"></div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: DETALHE CERIMONIAL ======== -->
+  <div class="screen" id="screen-cerimonial-detalhe">
+    <div class="page-content" id="cerimonialDetalheContent"></div>
+  </div>
+
+  <!-- ======== TELA: DICIONÁRIO ======== -->
+  <div class="screen" id="screen-dicionario">
+    <div class="page-content">
+      <div class="search-bar">
+        <span class="search-icon"><i data-lucide="search"></i></span>
+        <input type="text" placeholder="Buscar termo bíblico..." id="searchDicionario" oninput="filterDicionario()">
+      </div>
+      <div id="dicionarioLista"></div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: CADERNETA EBD ======== -->
+  <div class="screen" id="screen-escola">
+    <div class="page-content">
+      <!-- Hero Header -->
+      <div class="ebd-hero">
+        <div class="ebd-hero-icon"><i data-lucide="book-open-check"></i></div>
+        <div class="ebd-hero-info">
+          <h2 id="ebdClasseNome">Caderneta EBD</h2>
+          <p id="ebdClasseMeta">Carregando...</p>
+        </div>
+        <button class="ebd-config-btn" onclick="openEBDConfig()" aria-label="Configurar classe"><i data-lucide="settings"></i></button>
+      </div>
+
+      <!-- Seletor de Trimestre -->
+      <div class="ebd-trimestre-wrap">
+        <div class="ebd-trimestre-chips" id="ebdTrimestreChips"></div>
+      </div>
+
+      <!-- Tabs internos -->
+      <div class="ebd-tabs" id="ebdTabs">
+        <button class="ebd-tab active" data-tab="chamada" onclick="switchEBDTab(this,'chamada')"><i data-lucide="clipboard-list"></i> Chamada</button>
+        <button class="ebd-tab" data-tab="alunos" onclick="switchEBDTab(this,'alunos')"><i data-lucide="users"></i> Alunos</button>
+        <button class="ebd-tab" data-tab="resumo" onclick="switchEBDTab(this,'resumo')"><i data-lucide="bar-chart-3"></i> Resumo</button>
+      </div>
+
+      <!-- Conteúdo das Tabs -->
+      <div class="ebd-tab-content active" id="ebdTabChamada"></div>
+      <div class="ebd-tab-content" id="ebdTabAlunos"></div>
+      <div class="ebd-tab-content" id="ebdTabResumo"></div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: HARPA ======== -->
+  <div class="screen" id="screen-harpa">
+    <div class="page-content">
+      <div class="tabs" id="harpaTabs">
+        <button class="tab active" onclick="showHarpaTab('todos',this)">Todos</button>
+        <button class="tab" onclick="showHarpaTab('favoritos',this)"><i data-lucide="star"></i> Favoritos</button>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon"><i data-lucide="search"></i></span>
+        <input type="text" placeholder="Buscar hino por número ou título..." id="searchHarpa" oninput="filterHarpa()">
+      </div>
+      <div id="harpaLista"></div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: DETALHE HINO ======== -->
+  <div class="screen" id="screen-harpa-detalhe">
+    <div class="page-content" id="harpaDetalheContent" style="padding-bottom:140px"></div>
+  </div>
+
+  <!-- ======== PLAYER FLUTUANTE HARPA ======== -->
+  <div id="harpaFloatingPlayer" class="harpa-floating-player" style="display:none">
+    <audio id="harpaAudio" preload="metadata"></audio>
+    <div class="hfp-progress-wrap" id="hfpProgressWrap" onclick="seekHarpaAudio(event)">
+      <div class="hfp-progress-bar" id="hfpProgressBar"></div>
+    </div>
+    <div class="hfp-body">
+      <div class="hfp-info" onclick="reopenHarpaDetalhe()">
+        <div class="hfp-title" id="hfpTitle">Nenhum hino</div>
+        <div class="hfp-sub" id="hfpSub">Selecione um hino</div>
+      </div>
+      <div class="hfp-controls">
+        <button class="hfp-btn hfp-btn-sm" onclick="playPrevHarpa()" title="Anterior">⏮</button>
+        <button class="hfp-btn" id="hfpPlayBtn" onclick="toggleHarpaPlay()">▶</button>
+        <button class="hfp-btn hfp-btn-sm" onclick="playNextHarpa()" title="Próximo">⏭</button>
+        <div class="hfp-volume-wrap">
+          <span class="hfp-vol-icon" onclick="toggleHarpaMute()">🔊</span>
+          <input type="range" class="hfp-volume" id="hfpVolume" min="0" max="100" value="80" oninput="setHarpaVolume(this.value)">
+        </div>
+        <button class="hfp-btn hfp-btn-close" onclick="closeHarpaPlayer()" title="Fechar player">✕</button>
+      </div>
+    </div>
+    <div class="hfp-times">
+      <span id="hfpCurrentTime">0:00</span>
+      <span id="hfpDuration">--:--</span>
+    </div>
+  </div>
+
+  <!-- ======== TELA: PERFIL ======== -->
+  <div class="screen" id="screen-perfil">
+    <div class="page-content">
+      <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar">PJ</div>
+        <div class="profile-name" id="profileName">Pastor João Silva</div>
+        <div class="profile-role" id="profileRole">Pastor Titular</div>
+        <div class="profile-church" id="profileChurch">Igreja Evangélica Vida Nova</div>
+      </div>
+
+      <!-- CONFIGURAÇÃO DA IGREJA -->
+      <div class="profile-church-config">
+        <div class="section-label"><i data-lucide="church"></i> Configuração da Igreja</div>
+        <div class="config-card">
+          <div class="church-logo-area">
+            <div class="church-logo-preview" id="churchLogoPreview"><i data-lucide="church"></i></div>
+            <div class="church-logo-info">
+              <label class="form-label">Logo da Igreja</label>
+              <input type="file" id="churchLogoInput" accept="image/*" onchange="handleChurchLogo(event)" style="display:none">
+              <button class="church-logo-btn" onclick="document.getElementById('churchLogoInput').click()">📷 Enviar Logo</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nome da Igreja</label>
+            <input class="form-input" type="text" id="cfgNomeIgreja" placeholder="Ex: Igreja Vida Nova" oninput="onChurchConfigChange()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nome do Pastor</label>
+            <input class="form-input" type="text" id="cfgNomePastor" placeholder="Ex: Pastor João Silva" oninput="onChurchConfigChange()">
+          </div>
+          <button class="btn-save-config" onclick="saveChurchConfig()">✅ Salvar Configurações</button>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:var(--sp-6)">Minha Conta</div>
+      <div class="profile-menu-item">
+        <div class="profile-menu-icon premium-icon-wrap"><i data-lucide="user"></i></div>
+        <div class="profile-menu-text">
+          <div class="profile-menu-label">Dados Pessoais</div>
+          <div class="profile-menu-sub" id="profileEmailDisplay">Nome, telefone, e-mail</div>
+        </div>
+        <span style="color:var(--gray-300);font-size:0.9rem">→</span>
+      </div>
+      <div class="profile-menu-item">
+        <div class="profile-menu-icon premium-icon-wrap"><i data-lucide="star"></i></div>
+        <div class="profile-menu-text">
+          <div class="profile-menu-label">Meus Favoritos</div>
+          <div class="profile-menu-sub">Hinos, versículos e sermões salvos</div>
+        </div>
+        <span style="color:var(--gray-300);font-size:0.9rem">→</span>
+      </div>
+      <div class="profile-menu-item">
+        <div class="profile-menu-icon premium-icon-wrap">📊</div>
+        <div class="profile-menu-text">
+          <div class="profile-menu-label">Minha Atividade</div>
+          <div class="profile-menu-sub">Histórico recente e estatísticas</div>
+        </div>
+        <span style="color:var(--gray-300);font-size:0.9rem">→</span>
+      </div>
+
+      <div style="margin-top:var(--sp-6)">
+        <div class="section-label">Configurações</div>
+        <div class="profile-menu-item">
+          <div class="profile-menu-icon premium-icon-wrap"><i data-lucide="settings"></i></div>
+          <div class="profile-menu-text">
+            <div class="profile-menu-label">Preferências</div>
+            <div class="profile-menu-sub">Notificações, tema, idioma</div>
+          </div>
+          <span style="color:var(--gray-300);font-size:0.9rem">→</span>
+        </div>
+        <div class="profile-menu-item">
+          <div class="profile-menu-icon" style="background:var(--cream-dark);color:var(--gray-600)"><i data-lucide="lock"></i></div>
+          <div class="profile-menu-text">
+            <div class="profile-menu-label">Privacidade</div>
+            <div class="profile-menu-sub">Dados e segurança</div>
+          </div>
+          <span style="color:var(--gray-300);font-size:0.9rem">→</span>
+        </div>
+      </div>
+
+      <!-- Premium / Assinatura -->
+      <div style="margin-top:var(--sp-6)">
+        <div class="premium-card premium-card-cta" onclick="openPremiumModal()">
+          <div class="premium-badge" id="profilePlanBadge">Plano Gratuito</div>
+          <div class="premium-title" id="profilePlanTitle">Upgrade para Premium</div>
+          <div class="premium-text" id="profilePlanText">Sermões ilimitados, exportação PDF, backup na nuvem e relatórios avançados.</div>
+          <button class="premium-cta-btn" id="profilePlanBtn"><i data-lucide="crown"></i> Ver Plano Premium</button>
+        </div>
+      </div>
+
+      <div style="margin-top:var(--sp-6)">
+        <div class="section-label">Sobre</div>
+        <div class="profile-menu-item">
+          <div class="profile-menu-icon" style="background:var(--cream-dark);color:var(--gray-600)"><i data-lucide="info"></i></div>
+          <div class="profile-menu-text">
+            <div class="profile-menu-label">Versão do App</div>
+            <div class="profile-menu-sub">1.0.0 — MVP</div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- LOGOUT -->
+      <button class="btn-logout" onclick="handleLogout()">
+        <i data-lucide="log-out"></i> Sair da Conta
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ======== TELA: TESOURARIA ======== -->
+  <div class="screen" id="screen-tesouraria">
+    <div class="page-content">
+      <div class="module-hero">
+        <div class="module-hero-icon"><i data-lucide="banknote"></i></div>
+        <div class="module-hero-text">
+          <h2>Tesouraria da Igreja</h2>
+          <p>Gestão completa de entradas, saídas e mensalidades dos membros</p>
+        </div>
+      </div>
+
+      <div class="bento-stats" style="margin-bottom:var(--sp-6)">
+        <div class="bento-stat-box">
+          <div class="bento-stat-content">
+            <div class="stat-label">Saldo Atual</div>
+            <div class="stat-number" id="finSaldo">R$ 0,00</div>
+          </div>
+        </div>
+        <div class="bento-stat-divider"></div>
+        <div class="bento-stat-box">
+          <div class="bento-stat-content">
+            <div class="stat-label">Entradas (Mês)</div>
+            <div class="stat-number" style="color:var(--emerald)" id="finEntradas">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="finance-actions">
+        <button class="btn-primary" onclick="openAddFinanca('entrada')"><i data-lucide="plus-circle"></i> Entrada</button>
+        <button class="btn-secondary" onclick="openAddFinanca('saida')"><i data-lucide="minus-circle"></i> Saída</button>
+      </div>
+
+      <div class="section-label">Movimentações Recentes</div>
+      <div id="financasLista" class="financas-lista"></div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: CARTEIRINHA ======== -->
+  <div class="screen" id="screen-carteirinha">
+    <div class="page-content">
+      <div class="module-hero">
+        <div class="module-hero-icon"><i data-lucide="contact-2"></i></div>
+        <div class="module-hero-text">
+          <h2>Carteirinha de Membro</h2>
+          <p>Tenha sua identificação sempre com você. Tire uma foto da sua carteira física para salvá-la no app.</p>
+        </div>
+      </div>
+
+      <div class="carteirinha-container">
+        <div id="carteirinhaPreview" class="carteirinha-preview">
+          <div class="empty-card">
+            <i data-lucide="camera" style="width:48px;height:48px;opacity:0.2;margin-bottom:var(--sp-4)"></i>
+            <p>Nenhuma carteirinha capturada</p>
+          </div>
+        </div>
+        
+        <input type="file" id="carteirinhaInput" accept="image/*" capture="environment" onchange="handleCarteirinhaUpload(event)" style="display:none">
+        
+        <div class="carteirinha-actions">
+          <button class="btn-primary" onclick="document.getElementById('carteirinhaInput').click()" style="flex:1">
+            <i data-lucide="camera"></i> Tirar Foto / Upload
+          </button>
+          <button class="btn-danger" id="btnDeleteCarteirinha" onclick="deleteCarteirinha()" style="display:none;width:50px;padding:0;justify-content:center" title="Remover Foto">
+            <i data-lucide="trash-2"></i>
+          </button>
+        </div>
+
+        <div class="carteirinha-tip">
+          <i data-lucide="shield-check"></i>
+          <p>Esta imagem fica salva de forma segura apenas neste dispositivo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TELA: FICHA DO MEMBRO ======== -->
+  <div class="screen" id="screen-membro-detalhe">
+    <div class="page-content" id="membroDetalheContent"></div>
+  </div>
+
+  <!-- ============ BOTTOM NAVIGATION ============ -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="navigateTo('inicio')" id="nav-inicio">
+      <span class="nav-icon"><i data-lucide="home"></i></span>
+      <span class="nav-label">Início</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('membros')" id="nav-membros" data-role="pastor">
+      <span class="nav-icon"><i data-lucide="users"></i></span>
+      <span class="nav-label">Membros</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('estudo')" id="nav-estudo">
+      <span class="nav-icon"><i data-lucide="book-open"></i></span>
+      <span class="nav-label">Estudo</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('culto')" id="nav-culto">
+      <span class="nav-icon"><i data-lucide="music"></i></span>
+      <span class="nav-label">Culto</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('escola')" id="nav-escola">
+      <span class="nav-icon"><i data-lucide="file-text"></i></span>
+      <span class="nav-label">EBD</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('carteirinha')" id="nav-carteirinha">
+      <span class="nav-icon"><i data-lucide="contact-2"></i></span>
+      <span class="nav-label">Carteira</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('perfil')" id="nav-perfil">
+      <span class="nav-icon"><i data-lucide="user"></i></span>
+      <span class="nav-label">Perfil</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- ============ MODAIS ============ -->
+
+<!-- Modal: Novo Membro -->
+<div class="modal-overlay" id="modalMembro">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Novo Membro</div>
+    <form id="formMembro" onsubmit="saveMembro(event)">
+      <div class="form-group"><label class="form-label">Nome completo *</label><input class="form-input" id="mNome" required placeholder="Nome completo do membro"></div>
+      <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="mTelefone" type="tel" placeholder="(00) 00000-0000"></div>
+      <div class="form-group"><label class="form-label">Endereço</label><input class="form-input" id="mEndereco" placeholder="Rua, número — Bairro"></div>
+      <div class="form-group"><label class="form-label">Data de nascimento</label><input class="form-input" id="mNascimento" type="date"></div>
+      <div class="form-group"><label class="form-label">Data de batismo</label><input class="form-input" id="mBatismo" type="date"></div>
+      <div class="form-group"><label class="form-label">Cargo / Função</label><input class="form-input" id="mCargo" placeholder="Ex: Diácono, Líder de louvor"></div>
+      <div class="form-group"><label class="form-label">Congregação</label><input class="form-input" id="mCongregacao" placeholder="Ex: Sede Central"></div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-input" id="mStatus">
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Observações</label><textarea class="form-input" id="mObservacoes" placeholder="Anotações sobre o membro..."></textarea></div>
+      <div class="form-group">
+        <label class="form-label"><i data-lucide="clipboard-list"></i> Nota Pastoral (privada)</label>
+        <textarea class="form-input" id="mNotaPastoral" placeholder="Pedidos de oração, visitas, acompanhamento..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary" style="margin-bottom:var(--sp-3)">Salvar Membro</button>
+      <button type="button" class="btn-secondary" onclick="closeModal('modalMembro')">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Editar Membro -->
+<div class="modal-overlay" id="modalEditMembro">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Editar Membro</div>
+    <form id="formEditMembro" onsubmit="updateMembro(event)">
+      <input type="hidden" id="editMembroId">
+      <div class="form-group"><label class="form-label">Nome completo *</label><input class="form-input" id="emNome" required></div>
+      <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="emTelefone" type="tel" placeholder="(00) 00000-0000"></div>
+      <div class="form-group"><label class="form-label">Endereço</label><input class="form-input" id="emEndereco"></div>
+      <div class="form-group"><label class="form-label">Data de nascimento</label><input class="form-input" id="emNascimento" type="date"></div>
+      <div class="form-group"><label class="form-label">Data de batismo</label><input class="form-input" id="emBatismo" type="date"></div>
+      <div class="form-group"><label class="form-label">Cargo / Função</label><input class="form-input" id="emCargo"></div>
+      <div class="form-group"><label class="form-label">Congregação</label><input class="form-input" id="emCongregacao"></div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-input" id="emStatus">
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Observações</label><textarea class="form-input" id="emObservacoes"></textarea></div>
+      <button type="submit" class="btn-primary" style="margin-bottom:var(--sp-3)">Salvar Alterações</button>
+      <button type="button" class="btn-secondary" onclick="closeModal('modalEditMembro')">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Confirmar Exclusão -->
+<div class="modal-overlay" id="modalDeleteMembro">
+  <div class="modal-sheet" style="text-align:center;padding:var(--sp-8) var(--sp-5)">
+    <div style="font-size:2.5rem;margin-bottom:var(--sp-4)"><i data-lucide="alert-triangle"></i></div>
+    <div style="font-size:var(--fs-lg);font-weight:800;color:var(--navy);margin-bottom:var(--sp-2)">Excluir Membro?</div>
+    <div id="deleteMembroMsg" style="font-size:var(--fs-sm);color:var(--gray-600);margin-bottom:var(--sp-6);line-height:1.5"></div>
+    <button class="btn-danger" onclick="confirmDeleteMembro()" style="margin-bottom:var(--sp-3)">Sim, Excluir</button>
+    <button class="btn-secondary" onclick="closeModal('modalDeleteMembro')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: Novo Sermão -->
+<div class="modal-overlay" id="modalSermao">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Novo Sermão</div>
+    <form id="formSermao" onsubmit="saveSermao(event)">
+      <div class="form-group"><label class="form-label">Título do sermão *</label><input class="form-input" id="sTitulo" required placeholder="Ex: A fé que move montanhas"></div>
+      <div class="form-group"><label class="form-label">Texto base</label><input class="form-input" id="sTexto" placeholder="Ex: Mateus 17:20"></div>
+      <div class="form-group"><label class="form-label">Introdução</label><textarea class="form-input" id="sIntro" placeholder="Contexto e abertura do sermão..."></textarea></div>
+      <div class="form-group"><label class="form-label">Conclusão</label><textarea class="form-input" id="sConclusao" placeholder="Aplicação e encerramento..."></textarea></div>
+      <button type="submit" class="btn-primary" style="margin-bottom:var(--sp-3)">Salvar Sermão</button>
+      <button type="button" class="btn-secondary" onclick="closeModal('modalSermao')">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Configurar Classe EBD -->
+<div class="modal-overlay" id="modalEBDConfig">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚙️ Configurar Classe</div>
+    <form id="formEBDConfig" onsubmit="saveEBDConfig(event)">
+      <div class="form-group"><label class="form-label">Nome da classe *</label><input class="form-input" id="ebdConfigNome" required placeholder="Ex: Classe Adultos — Sede Central"></div>
+      <div class="form-group"><label class="form-label">Tipo de classe</label>
+        <select class="form-input" id="ebdConfigTipo">
+          <option value="Adulto">Adulto</option>
+          <option value="Jovem">Jovem</option>
+          <option value="Criança">Criança</option>
+          <option value="Novos Convertidos">Novos Convertidos</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Ano</label><input class="form-input" id="ebdConfigAno" type="number" min="2020" max="2035" value="2025"></div>
+      <button type="submit" class="btn-primary" style="margin-bottom:var(--sp-3)">Salvar Configurações</button>
+      <button type="button" class="btn-secondary" onclick="closeModal('modalEBDConfig')">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Adicionar/Editar Aluno EBD -->
+<div class="modal-overlay" id="modalEBDAluno">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="ebdAlunoModalTitle">➕ Novo Aluno</div>
+    <form id="formEBDAluno" onsubmit="saveEBDAluno(event)">
+      <input type="hidden" id="ebdAlunoEditId" value="">
+      <div class="form-group"><label class="form-label">Nome completo *</label><input class="form-input" id="ebdAlunoNome" required placeholder="Ex: Maria da Silva"></div>
+      <button type="submit" class="btn-primary" style="margin-bottom:var(--sp-3)">Salvar Aluno</button>
+      <button type="button" class="btn-secondary" onclick="closeModal('modalEBDAluno')">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Adicionar Data de Aula EBD -->
+<div class="modal-overlay" id="modalEBDData">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📅 Nova Data de Aula</div>
+    <form id="formEBDData" onsubmit="saveEBDData(event)">
+      <div class="form-group"><label class="form-label">Data da aula *</label><input class="form-input" id="ebdNovaData" type="date" required></div>
+      <button type="submit" class="btn-primary" style="margin-bottom:var(--sp-3)">Adicionar Data</button>
+      <button type="button" class="btn-secondary" onclick="closeModal('modalEBDData')">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Resumo da Aula EBD -->
+<div class="modal-overlay" id="modalEBDResumo">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="ebdResumoModalTitle">📊 Resumo da Aula</div>
+    <form id="formEBDResumo" onsubmit="saveEBDResumoData(event)">
+      <input type="hidden" id="ebdResumoDataKey" value="">
+      <div class="form-group"><label class="form-label">Visitantes</label><input class="form-input" id="ebdResumoVisitantes" type="number" min="0" value="0"></div>
+      <div class="form-group"><label class="form-label">Bíblias</label><input class="form-input" id="ebdResumoBiblias" type="number" min="0" value="0"></div>
+      <div class="form-group"><label class="form-label">Revistas</label><input class="form-input" id="ebdResumoRevistas" type="number" min="0" value="0"></div>
+      <div class="form-group"><label class="form-label">Ofertas</label><input class="form-input" id="ebdResumoOfertas" placeholder="R$ 0,00"></div>
+      <button type="submit" class="btn-primary" style="margin-bottom:var(--sp-3)">Salvar Resumo</button>
+      <button type="button" class="btn-secondary" onclick="closeModal('modalEBDResumo')">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Nova Finança (Entrada/Saída) -->
+<div class="modal-overlay" id="modalFinancas">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="financaModalTitle">Nova Entrada</div>
+    <form id="formFinancas" onsubmit="saveFinanca(event)">
+      <input type="hidden" id="finTipo" value="entrada">
+      <div class="form-group">
+        <label class="form-label">Descrição *</label>
+        <input class="form-input" id="finDesc" required placeholder="Ex: Dízimo Maria, Luz da Igreja...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Valor (R$) *</label>
+        <input class="form-input" id="finValor" type="number" step="0.01" required placeholder="0,00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Data *</label>
+        <input class="form-input" id="finData" type="date" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoria</label>
+        <select class="form-input" id="finCategoria">
+          <option value="Dízimo">Dízimo</option>
+          <option value="Oferta">Oferta</option>
+          <option value="Manutenção">Manutenção</option>
+          <option value="Social">Social</option>
+          <option value="Outros">Outros</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-primary" style="margin-bottom:var(--sp-3)">Salvar Lançamento</button>
+      <button type="button" class="btn-secondary" onclick="closeModal('modalFinancas')">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MODAL BUSCA GLOBAL ============ -->
+<div class="global-search-overlay" id="globalSearchOverlay">
+  <div class="global-search-modal">
+    <div class="search-header">
+      <div class="search-input-wrapper">
+        <span class="search-icon"><i data-lucide="search"></i></span>
+        <input type="text" id="globalSearchInput" placeholder="Pesquise na Bíblia, Harpa, Dicionário..." autocomplete="off">
+        <button class="clear-search-btn" id="clearSearchBtn" onclick="clearGlobalSearch()" style="display:none;">✕</button>
+      </div>
+      <button class="btn-cancel-search" onclick="closeGlobalSearch()">Cancelar</button>
+    </div>
+    <div class="search-results-area" id="globalSearchResults">
+      <div class="search-empty-state">
+        <div><i data-lucide="sparkles"></i></div>
+        <p>A "Pesquisa Inteligente" permite encontrar rapidamente versículos da Bíblia, hinos da Harpa ou palavras no Dicionário Bíblico. Digite algo para começar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: ONBOARDING BOAS-VINDAS ============ -->
+<div class="modal-overlay" id="modalOnboarding">
+  <div class="modal-sheet onboarding-sheet">
+    <div class="onboarding-content" id="onboardingContent">
+      <!-- Step 1 -->
+      <div class="onboarding-step active" data-step="1">
+        <div class="onboarding-icon">🎉</div>
+        <h2>Bem-vindo ao App Ministerial!</h2>
+        <p>Sua plataforma completa para gestão pastoral, estudo bíblico, pregação e muito mais.</p>
+      </div>
+      <!-- Step 2 -->
+      <div class="onboarding-step" data-step="2">
+        <div class="onboarding-icon">📖</div>
+        <h2>Bíblia & Harpa Cristã</h2>
+        <p>Acesse a Bíblia completa em áudio, 640 hinos da Harpa e um dicionário bíblico integrado.</p>
+      </div>
+      <!-- Step 3 -->
+      <div class="onboarding-step" data-step="3">
+        <div class="onboarding-icon">🤖</div>
+        <h2>Assistente IA para Sermões</h2>
+        <p>Gere esboços profissionais de pregação, com referências bíblicas e perguntas para células.</p>
+      </div>
+      <!-- Step 4 -->
+      <div class="onboarding-step" data-step="4">
+        <div class="onboarding-icon">👥</div>
+        <h2>CRM Pastoral</h2>
+        <p>Gerencie membros, acompanhe visitas, registre pedidos de oração e muito mais.</p>
+      </div>
+    </div>
+    <div class="onboarding-dots">
+      <span class="onboarding-dot active" data-dot="1"></span>
+      <span class="onboarding-dot" data-dot="2"></span>
+      <span class="onboarding-dot" data-dot="3"></span>
+      <span class="onboarding-dot" data-dot="4"></span>
+    </div>
+    <div class="onboarding-actions">
+      <button class="onboarding-skip" onclick="closeOnboarding()">Pular</button>
+      <button class="onboarding-next" id="onboardingNextBtn" onclick="nextOnboardingStep()">Próximo <i data-lucide="arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: UPGRADE PREMIUM ============ -->
+<div class="modal-overlay" id="modalPremium">
+  <div class="modal-sheet premium-modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="premium-modal-header">
+      <div class="premium-modal-icon"><i data-lucide="crown"></i></div>
+      <h2>Escolha seu Plano</h2>
+      <p>Acesso total às ferramentas ministeriais e de gestão</p>
+    </div>
+
+    <!-- Seletor de Perfil do Plano -->
+    <div class="plan-type-selector">
+      <button class="plan-type-btn active" id="btnPlanPastor" onclick="selectPlanProfile('pastor')">
+        <i data-lucide="shield-check"></i> Pastor
+      </button>
+      <button class="plan-type-btn" id="btnPlanMembro" onclick="selectPlanProfile('membro')">
+        <i data-lucide="user"></i> Membro
+      </button>
+    </div>
+
+    <div class="premium-plans-grid" id="premiumPlansGrid">
+      <!-- Gerado dinamicamente: Mensal, Anual, Vitalício -->
+    </div>
+
+    <div class="premium-benefits">
+      <div class="premium-benefit">
+        <span class="benefit-icon"><i data-lucide="check"></i></span>
+        <span>Acesso à Bíblia em Áudio & Harpa Cristã</span>
+      </div>
+      <div class="premium-benefit">
+        <span class="benefit-icon"><i data-lucide="check"></i></span>
+        <span>Assistente IA para Sermões (Ilimitado)</span>
+      </div>
+      <div class="premium-benefit">
+        <span class="benefit-icon"><i data-lucide="check"></i></span>
+        <span>Gestão de Membros & Tesouraria</span>
+      </div>
+    </div>
+
+    <button class="btn-secondary" onclick="closeModal('modalPremium')" style="width:100%;margin-top:var(--sp-4)">Agora não, obrigado</button>
+    <div class="premium-guarantee"><i data-lucide="shield-check"></i> Compra segura · Cancele quando quiser</div>
+  </div>
+</div>
+
+<!-- ============ MODAL: CHECKOUT SIMULADO ============ -->
+<div class="modal-overlay" id="modalCheckout">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Finalizar Assinatura</div>
+    
+    <div class="checkout-summary">
+      <div class="checkout-plan-name" id="checkoutPlanName">Pastor Premium — Anual</div>
+      <div class="checkout-plan-price" id="checkoutPlanPrice">R$ 240,00</div>
+    </div>
+
+    <div class="checkout-tabs">
+      <button class="checkout-tab active" onclick="showCheckoutMethod('pix')">PIX</button>
+      <button class="checkout-tab" onclick="showCheckoutMethod('card')">Cartão</button>
+    </div>
+
+    <div id="checkout-pix" class="checkout-method-content">
+      <div class="pix-qr-area">
+        <div class="pix-qr-mock">
+          <i data-lucide="qr-code" style="width:120px;height:120px;opacity:0.8"></i>
+        </div>
+        <p>Aponte a câmera do seu celular para o QR Code acima</p>
+      </div>
+      <button class="btn-primary" onclick="simulatePaymentSuccess()">Já realizei o pagamento</button>
+    </div>
+
+    <div id="checkout-card" class="checkout-method-content" style="display:none">
+      <form onsubmit="handleCardPayment(event)">
+        <div class="form-group">
+          <label class="form-label">Número do Cartão</label>
+          <input class="form-input" placeholder="0000 0000 0000 0000" maxlength="19">
+        </div>
+        <div style="display:grid;grid-template-columns: 1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label">Validade</label>
+            <input class="form-input" placeholder="MM/AA" maxlength="5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVV</label>
+            <input class="form-input" placeholder="000" maxlength="3">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Pagar Agora</button>
+      </form>
+    </div>
+
+    <button class="btn-secondary" onclick="closeModal('modalCheckout')" style="width:100%;margin-top:12px">Cancelar</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+    <script src="lucide-watcher.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>

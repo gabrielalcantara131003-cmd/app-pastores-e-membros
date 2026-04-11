@@ -1,0 +1,424 @@
+/* =========================================
+   UI BENTO & HIGH-END OVERHAUL
+   ========================================= */
+
+/* --- TELA DE LOGIN OVERHAUL --- */
+.auth-screen {
+  background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.4), transparent 50%),
+              radial-gradient(circle at bottom left, rgba(229, 198, 101, 0.2), transparent 50%),
+              var(--cream);
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.auth-screen::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.bento-auth-container {
+  background: rgba(10, 17, 34, 0.6);
+  /* backdrop-filter removed */
+  -webkit-/* backdrop-filter removed */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  border-radius: 28px;
+  padding: 40px;
+  max-width: 420px;
+  margin: auto;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: authFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes authFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-brand h1 {
+  font-size: 1.8rem;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, #fff, var(--gold-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+/* Auth Forms */
+.form-group-bento {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.form-group-bento .form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--gray-400);
+  margin-bottom: 8px;
+}
+
+.form-group-bento .form-label .lucide {
+  width: 14px;
+  height: 14px;
+  color: var(--violet);
+}
+
+.form-group-bento .form-input {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(4, 9, 20, 0.6);
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 1rem;
+}
+
+.form-group-bento .form-input:focus {
+  background: rgba(4, 9, 20, 0.8);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.password-toggle {
+  right: 16px;
+  color: var(--gray-400);
+}
+
+.btn-bento-primary {
+  background: linear-gradient(135deg, var(--violet), var(--gold-dark));
+  border: none;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 16px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+
+/* --- DASHBOARD BENTO GRID --- */
+
+.bento-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* Pastor Top Stats (Bento Header) */
+.bento-stats {
+  display: flex;
+  align-items: center;
+  background: rgba(10, 17, 34, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 24px;
+  padding: 20px;
+  /* backdrop-filter removed */
+  -webkit-/* backdrop-filter removed */
+  animation: bentoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.bento-stat-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bento-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-300);
+}
+
+.bento-stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-stat-content .stat-number {
+  font-size: 1.8rem;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.bento-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0 16px;
+}
+
+/* Bento Actions Grid (2x2) */
+.bento-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.bento-card {
+  position: relative;
+  background: rgba(10, 17, 34, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 28px;
+  padding: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 170px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  /* backdrop-filter removed */
+  -webkit-/* backdrop-filter removed */
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+/* Stagger animations for Bento */
+.bento-card:nth-child(1) { animation: bentoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s; }
+.bento-card:nth-child(2) { animation: bentoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.25s; }
+.bento-card:nth-child(3) { animation: bentoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s; }
+.bento-card:nth-child(4) { animation: bentoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.35s; }
+
+.bento-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px) scale(0.99);
+}
+
+.bento-card:active {
+  transform: translateY(2px) scale(0.96);
+}
+
+.bento-card-bg {
+  position: absolute;
+  top: -30%;
+  right: -30%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.bento-card:hover .bento-card-bg {
+  opacity: 0.3;
+}
+
+/* Glow Variations */
+.blur-gold { background: #F59E0B; }
+.blur-violet { background: #8B5CF6; }
+.blur-blue { background: #3B82F6; }
+.blur-emerald { background: #10B981; }
+
+.bento-card-header, .bento-card-body {
+  position: relative;
+  z-index: 1;
+}
+
+.bento-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.bento-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--gray-300);
+}
+.bento-icon.gold-icon { color: #FbBF24; background: rgba(245, 158, 11, 0.1); }
+.bento-icon.violet-icon { color: #A78BFA; background: rgba(212, 175, 55, 0.1); }
+
+.bento-arrow {
+  color: rgba(255,255,255,0.3);
+  transition: all 0.3s ease;
+}
+
+.bento-card:hover .bento-arrow {
+  color: #fff;
+  transform: translate(2px, -2px);
+}
+
+.bento-card-body h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+}
+
+.bento-card-body p {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  margin: 0;
+}
+
+@keyframes bentoReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Remove old stats-row styles */
+.stats-row { display: none !important; }
+.quick-grid { display: none !important; }
+
+/* --- SELECT DARK MODE --- */
+.bento-select,
+select.form-input {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(4, 9, 20, 0.6) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.9);
+}
+.bento-select option,
+select.form-input option {
+  background: #1e293b;
+  color: rgba(255,255,255,0.9);
+}
+
+/* --- PREMIUM ICON WRAP (POLISHED) --- */
+.premium-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  color: #a78bfa;
+  flex-shrink: 0;
+}
+
+.premium-icon-wrap .lucide {
+  width: 20px;
+  height: 20px;
+}
+
+/* --- FLOATING GLOW ACCENT --- */
+.bento-card.bento-feature::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.bento-card.bento-feature:hover::after {
+  opacity: 1;
+}
+
+/* --- HERO VERSE CARD UPGRADE --- */
+.hero-verse-card {
+  background: linear-gradient(135deg, rgba(10, 17, 34, 0.8), rgba(4, 9, 20, 0.9)) !important;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.hero-verse-card::before {
+  color: rgba(212, 175, 55, 0.08) !important;
+}
+
+/* --- CONTINUE CARD DARK --- */
+.continue-card {
+  border-left-color: var(--violet) !important;
+}
+
+/* --- SECTION LABEL ICON --- */
+.section-label .lucide {
+  width: 16px;
+  height: 16px;
+  color: var(--violet);
+}
+
+/* --- GLOBAL SEARCH DARK ADJUSTMENTS --- */
+.global-search-modal {
+  background: var(--cream) !important;
+}
+.search-header {
+  background: rgba(4, 9, 20, 0.95) !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
+}
+.search-input-wrapper {
+  background: rgba(10, 17, 34, 0.6) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+.search-results-area {
+  background: var(--cream) !important;
+}
+.search-result-item {
+  background: rgba(10, 17, 34, 0.5) !important;
+  border-color: rgba(255,255,255,0.06) !important;
+}
+.res-harpa .res-num {
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: #a78bfa !important;
+}
+
+/* --- MODAL DARK MODE FIX --- */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+.modal-sheet {
+  background: var(--cream) !important;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.modal-handle {
+  background: rgba(255,255,255,0.15) !important;
+}
+
+/* --- PAGE-LEVEL FADE IN --- */
+/* Removido: animação redundante com .screenIn (0.15s), para melhorar a responsividade de cliques em abas. */
+/* --- SCROLLBAR DARK --- */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}

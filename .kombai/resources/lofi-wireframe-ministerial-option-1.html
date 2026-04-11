@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe Opção 1 — Refinada</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Comic Sans MS', 'Segoe Print', cursive; background: #e8e8e8; color: #333; padding: 24px; }
+  h1.page-title { text-align: center; font-size: 1.6rem; margin-bottom: 8px; color: #222; }
+  p.page-desc { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 32px; max-width: 700px; margin-left: auto; margin-right: auto; }
+  .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 40px; }
+  .nav-links a { background: #fff; border: 2px solid #999; border-radius: 20px; padding: 6px 16px; font-size: 0.8rem; color: #333; text-decoration: none; }
+  .nav-links a:hover { background: #ddd; }
+  .screen-section { max-width: 430px; margin: 0 auto 60px; }
+  .screen-label { font-size: 1.1rem; font-weight: bold; color: #444; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px dashed #aaa; }
+  .phone { background: #fff; border: 3px solid #666; border-radius: 32px; overflow: hidden; box-shadow: 4px 4px 0 #bbb; }
+  .status-bar { background: #f5f5f5; padding: 6px 16px; display: flex; justify-content: space-between; font-size: 0.65rem; color: #999; border-bottom: 1px solid #ddd; }
+  .header { background: #f5f5f5; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #ddd; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .logo-box { width: 36px; height: 36px; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-weight: bold; font-size: 1rem; }
+  .header-text h2 { font-size: 0.9rem; color: #222; }
+  .header-text span { font-size: 0.65rem; color: #999; }
+  .header-icons { display: flex; gap: 8px; }
+  .icon-btn { width: 32px; height: 32px; border: 2px solid #999; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; background: #fff; }
+  .content { padding: 16px; min-height: 500px; }
+  .bottom-nav { display: flex; justify-content: space-around; padding: 10px 4px 14px; background: #f5f5f5; border-top: 2px solid #ddd; }
+  .nav-tab { text-align: center; font-size: 0.55rem; color: #999; flex: 1; }
+  .nav-tab .nav-ico { width: 24px; height: 24px; border: 2px solid #ccc; border-radius: 6px; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+  .nav-tab.active .nav-ico { background: #333; border-color: #333; color: #fff; }
+  .nav-tab.active { color: #333; font-weight: bold; }
+  /* Component badge */
+  .badge-reuse { position: absolute; top: -6px; right: -6px; background: #4CAF50; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 9px; font-family: Arial, sans-serif; font-weight: bold; z-index: 10; white-space: nowrap; }
+  .badge-new { position: absolute; top: -6px; right: -6px; background: #FF9800; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 9px; font-family: Arial, sans-serif; font-weight: bold; z-index: 10; white-space: nowrap; }
+  .rel { position: relative; }
+  /* Wireframe elements */
+  .greeting { margin-bottom: 16px; }
+  .greeting small { color: #999; font-size: 0.75rem; }
+  .greeting h2 { font-size: 1.3rem; color: #222; }
+  .verse-box { background: #333; color: #fff; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .verse-box .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: #ccc; margin-bottom: 8px; }
+  .verse-box .text { font-style: italic; font-size: 0.85rem; line-height: 1.6; margin-bottom: 8px; }
+  .verse-box .ref { font-size: 0.75rem; color: #aaa; font-weight: bold; }
+  .bento-stats-bar { display: flex; background: #f5f5f5; border: 2px solid #ddd; border-radius: 16px; padding: 14px; margin-bottom: 16px; }
+  .bento-stat { flex: 1; text-align: center; }
+  .bento-stat .num { font-size: 1.5rem; font-weight: bold; color: #222; }
+  .bento-stat .lbl { font-size: 0.55rem; color: #999; text-transform: uppercase; }
+  .stat-divider { width: 1px; background: #ddd; margin: 0 10px; }
+  .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .bento-card { background: #f5f5f5; border: 2px solid #ddd; border-radius: 20px; padding: 18px; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; }
+  .bento-card .bc-icon { width: 32px; height: 32px; border: 2px solid #999; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; margin-bottom: 8px; }
+  .bento-card h4 { font-size: 0.85rem; color: #222; }
+  .bento-card p { font-size: 0.65rem; color: #999; }
+  .continue-box { background: #f5f5f5; border: 2px solid #ddd; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #666; }
+  .continue-box .cb-icon { font-size: 1.2rem; }
+  .continue-box .cb-text h5 { font-size: 0.8rem; color: #222; }
+  .continue-box .cb-text p { font-size: 0.65rem; color: #999; }
+  .section-lbl { font-size: 0.6rem; color: #999; text-transform: uppercase; letter-spacing: 0.1em; font-weight: bold; margin-bottom: 10px; margin-top: 16px; }
+  /* Search */
+  .search-bar { display: flex; align-items: center; background: #f5f5f5; border: 2px solid #ddd; border-radius: 24px; padding: 10px 16px; margin-bottom: 12px; gap: 8px; }
+  .search-bar input { background: none; border: none; font-family: inherit; font-size: 0.8rem; flex: 1; outline: none; }
+  /* Chips */
+  .chips { display: flex; gap: 6px; margin-bottom: 14px; }
+  .chip { padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: bold; border: 2px solid #ccc; background: #fff; color: #666; }
+  .chip.active { background: #333; color: #fff; border-color: #333; }
+  /* Member item */
+  .member-row { display: flex; align-items: center; gap: 10px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; flex-shrink: 0; }
+  .member-info { flex: 1; }
+  .member-info h5 { font-size: 0.8rem; color: #222; }
+  .member-info span { font-size: 0.6rem; color: #999; }
+  .status-pill { padding: 3px 8px; border-radius: 10px; font-size: 0.55rem; font-weight: bold; }
+  .status-pill.ativo { background: #e6f7ef; color: #2e7d32; }
+  .status-pill.inativo { background: #fde8e8; color: #c62828; }
+  .fab { width: 48px; height: 48px; background: #333; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; position: absolute; bottom: 80px; right: 16px; box-shadow: 3px 3px 0 #999; }
+  /* Tabs */
+  .tabs-bar { display: flex; background: #eee; border-radius: 20px; padding: 3px; margin-bottom: 14px; }
+  .tab { flex: 1; text-align: center; padding: 8px; font-size: 0.7rem; border-radius: 18px; color: #999; font-weight: bold; }
+  .tab.active { background: #fff; color: #333; box-shadow: 1px 1px 0 #ccc; }
+  /* Bible grid */
+  .bible-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .bible-item { padding: 10px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 0.75rem; font-weight: bold; color: #333; }
+  /* Player */
+  .player-box { background: #333; color: #fff; border-radius: 16px; padding: 20px; text-align: center; }
+  .player-box h3 { font-size: 1rem; margin-bottom: 4px; }
+  .player-box .p-sub { font-size: 0.65rem; color: #aaa; margin-bottom: 16px; }
+  .progress-bar { height: 4px; background: #555; border-radius: 2px; margin-bottom: 6px; }
+  .progress-fill { height: 100%; width: 35%; background: #ccc; border-radius: 2px; }
+  .p-times { display: flex; justify-content: space-between; font-size: 0.55rem; color: #777; margin-bottom: 16px; }
+  .p-controls { display: flex; justify-content: center; align-items: center; gap: 20px; }
+  .p-btn { width: 36px; height: 36px; border: 2px solid #777; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #aaa; background: none; }
+  .p-btn.main { width: 50px; height: 50px; background: #fff; color: #333; border: none; font-size: 1rem; }
+  /* Module hero */
+  .module-hero { background: #333; color: #fff; border-radius: 16px; padding: 18px; display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .module-hero .mh-icon { font-size: 1.6rem; }
+  .module-hero h3 { font-size: 0.95rem; }
+  .module-hero p { font-size: 0.65rem; color: #aaa; }
+  /* Module card */
+  .mod-card { display: flex; align-items: center; gap: 12px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 14px; padding: 14px; margin-bottom: 8px; }
+  .mod-card .mc-icon { width: 44px; height: 44px; border-radius: 12px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .mod-card .mc-text h5 { font-size: 0.8rem; color: #222; }
+  .mod-card .mc-text p { font-size: 0.6rem; color: #999; }
+  .mod-card .mc-arrow { color: #ccc; font-size: 0.9rem; margin-left: auto; }
+  /* Profile */
+  .profile-head { text-align: center; padding: 20px 0; }
+  .profile-avatar-big { width: 64px; height: 64px; border-radius: 50%; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin: 0 auto 8px; }
+  .profile-head h3 { font-size: 1rem; color: #222; }
+  .profile-head .role { font-size: 0.7rem; color: #666; }
+  .profile-head .church { font-size: 0.65rem; color: #999; }
+  .menu-item { display: flex; align-items: center; gap: 10px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; }
+  .menu-item .mi-icon { width: 34px; height: 34px; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+  .menu-item .mi-text h5 { font-size: 0.8rem; color: #333; }
+  .menu-item .mi-text p { font-size: 0.6rem; color: #999; }
+  .menu-item .mi-arrow { margin-left: auto; color: #ccc; }
+  .premium-box { background: #333; color: #fff; border-radius: 16px; padding: 18px; margin-top: 16px; }
+  .premium-box .pbadge { display: inline-block; background: #999; color: #fff; font-size: 0.5rem; padding: 2px 8px; border-radius: 8px; text-transform: uppercase; font-weight: bold; margin-bottom: 8px; }
+  .premium-box h4 { font-size: 0.9rem; margin-bottom: 4px; }
+  .premium-box p { font-size: 0.65rem; color: #aaa; line-height: 1.5; }
+  .logout-btn { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; background: #fff; font-family: inherit; font-size: 0.8rem; color: #c62828; font-weight: bold; margin-top: 16px; text-align: center; }
+  /* Auth */
+  .auth-wrap { background: #333; border-radius: 24px; padding: 28px 24px; margin: 40px 16px; }
+  .auth-brand { text-align: center; margin-bottom: 24px; }
+  .auth-logo { width: 48px; height: 48px; background: #fff; color: #333; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: bold; margin: 0 auto 10px; }
+  .auth-brand h2 { color: #fff; font-size: 1.3rem; }
+  .auth-brand p { color: #aaa; font-size: 0.75rem; }
+  .auth-tabs { display: flex; background: #444; border-radius: 12px; padding: 3px; margin-bottom: 20px; }
+  .auth-tab { flex: 1; text-align: center; padding: 8px; font-size: 0.75rem; border-radius: 10px; color: #aaa; font-weight: bold; }
+  .auth-tab.active { background: #555; color: #fff; }
+  .auth-field { margin-bottom: 14px; }
+  .auth-field label { display: block; font-size: 0.6rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+  .auth-field input, .auth-field select { width: 100%; padding: 12px; background: #222; border: 2px solid #555; border-radius: 10px; color: #fff; font-family: inherit; font-size: 0.85rem; }
+  .auth-submit { width: 100%; padding: 12px; background: #666; border: none; border-radius: 12px; color: #fff; font-family: inherit; font-size: 0.9rem; font-weight: bold; margin-top: 10px; }
+  .auth-toggle-text { text-align: center; font-size: 0.7rem; color: #aaa; margin-top: 16px; }
+  .auth-toggle-text a { color: #fff; text-decoration: underline; cursor: pointer; }
+  /* IA */
+  .ia-hero { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .ia-hero .ia-icon { font-size: 2rem; }
+  .ia-hero h3 { font-size: 0.95rem; color: #222; }
+  .ia-hero p { font-size: 0.65rem; color: #999; }
+  .ia-form { background: #f5f5f5; border: 2px solid #ddd; border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .ia-field { margin-bottom: 12px; }
+  .ia-field label { display: block; font-size: 0.6rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; font-weight: bold; }
+  .ia-field input { width: 100%; padding: 10px 12px; background: #fff; border: 2px solid #ddd; border-radius: 10px; font-family: inherit; font-size: 0.8rem; }
+  .obj-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .obj-chip { padding: 6px 12px; border-radius: 16px; font-size: 0.65rem; font-weight: bold; border: 2px solid #ccc; background: #fff; color: #666; }
+  .obj-chip.active { background: #333; color: #fff; border-color: #333; }
+  .ia-generate-btn { width: 100%; padding: 12px; background: #333; border: none; border-radius: 12px; color: #fff; font-family: inherit; font-size: 0.85rem; font-weight: bold; }
+  /* Speed */
+  .speed-row { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid #555; }
+  .speed-row span { font-size: 0.6rem; color: #777; }
+  .speed-btns { display: flex; gap: 4px; }
+  .spd-btn { padding: 4px 8px; font-size: 0.55rem; border-radius: 10px; border: 1px solid #666; color: #aaa; background: none; font-family: inherit; font-weight: bold; }
+  .spd-btn.active { background: #fff; color: #333; border-color: #fff; }
+  /* Floating player */
+  .float-player { background: #f5f5f5; border: 2px solid #ddd; border-radius: 14px; margin: 0 16px; padding: 0; overflow: hidden; position: relative; }
+  .fp-progress { height: 3px; background: #ddd; }
+  .fp-progress-fill { height: 100%; width: 40%; background: #666; }
+  .fp-body { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+  .fp-info { flex: 1; }
+  .fp-info h5 { font-size: 0.75rem; color: #222; }
+  .fp-info span { font-size: 0.6rem; color: #999; }
+  .fp-controls { display: flex; gap: 6px; align-items: center; }
+  .fp-btn { width: 28px; height: 28px; border: 2px solid #999; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; background: #fff; color: #333; }
+  .fp-btn.play { width: 36px; height: 36px; background: #333; color: #fff; border-color: #333; font-size: 0.8rem; }
+  /* Church config */
+  .config-card { background: #f5f5f5; border: 2px solid #ddd; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+  .config-logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .config-logo { width: 56px; height: 56px; border: 2px dashed #ccc; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #ccc; }
+  .config-logo-btn { padding: 6px 12px; background: #eee; border: 2px solid #ddd; border-radius: 8px; font-size: 0.65rem; font-weight: bold; color: #333; font-family: inherit; }
+  .config-field { margin-bottom: 10px; }
+  .config-field label { display: block; font-size: 0.6rem; color: #666; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+  .config-field input { width: 100%; padding: 8px 12px; background: #fff; border: 2px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.8rem; }
+  .save-config-btn { width: 100%; padding: 10px; background: #333; color: #fff; border: none; border-radius: 10px; font-family: inherit; font-size: 0.8rem; font-weight: bold; }
+  .lesson-row { background: #f5f5f5; border: 2px solid #ddd; border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+  .lesson-row .lr-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .lesson-row .lr-top .lr-date { font-size: 0.6rem; color: #999; }
+  .lesson-row h5 { font-size: 0.8rem; color: #222; margin-bottom: 2px; }
+  .lesson-row .lr-ref { font-size: 0.65rem; color: #666; font-weight: bold; }
+  .lesson-row .lr-preview { font-size: 0.6rem; color: #999; margin-top: 6px; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Opção 1 — Refinada</h1>
+<p class="page-desc">Evolução conservadora do layout atual. Mantém a estrutura de bottom navigation com 6 itens, refina espaçamentos, hierarquia visual e organização dos componentes. Foco em clareza e consistência.</p>
+
+<nav class="nav-links">
+  <a href="#auth1">Login</a>
+  <a href="#inicio1">Início</a>
+  <a href="#membros1">Membros</a>
+  <a href="#biblia1">Bíblia</a>
+  <a href="#sermao1">Sermões</a>
+  <a href="#harpa1">Harpa</a>
+  <a href="#escola1">EBD</a>
+  <a href="#culto1">Culto</a>
+  <a href="#perfil1">Perfil</a>
+</nav>
+
+<!-- ======== 1. AUTH ======== -->
+<div class="screen-section" id="auth1">
+  <div class="screen-label">1. Tela de Login / Cadastro</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="content" style="background:#eee;padding:0;min-height:auto">
+      <!-- REUSABLE: auth-screen from index.html -->
+      <div class="rel">
+        <span class="badge-reuse" title="index.html auth-screen">[REUSE] AuthScreen</span>
+        <div class="auth-wrap">
+          <div class="auth-brand">
+            <div class="auth-logo">M</div>
+            <h2>App Ministerial</h2>
+            <p>A plataforma completa para sua igreja</p>
+          </div>
+          <!-- REUSABLE: auth tabs -->
+          <div class="rel">
+            <span class="badge-reuse" title="index.html .auth-tabs">[REUSE] AuthTabs</span>
+            <div class="auth-tabs">
+              <div class="auth-tab active">Entrar</div>
+              <div class="auth-tab">Criar Conta</div>
+            </div>
+          </div>
+          <div class="auth-field">
+            <label>✉ E-mail</label>
+            <input type="text" placeholder="seu@email.com">
+          </div>
+          <div class="auth-field">
+            <label>🔒 Senha</label>
+            <input type="password" placeholder="Sua senha">
+          </div>
+          <div class="auth-submit">Acessar Plataforma</div>
+          <div class="auth-toggle-text">Não tem conta? <a>Crie agora</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 2. INÍCIO ======== -->
+<div class="screen-section" id="inicio1">
+  <div class="screen-label">2. Tela Início / Dashboard</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <!-- REUSABLE: app-header -->
+    <div class="rel">
+      <span class="badge-reuse" title="index.html .app-header">[REUSE] AppHeader</span>
+      <div class="header">
+        <div class="header-left">
+          <div class="logo-box">M</div>
+          <div class="header-text">
+            <h2>Ministerial</h2>
+            <span>Igreja Vida Nova</span>
+          </div>
+        </div>
+        <div class="header-icons">
+          <div class="icon-btn">🔍</div>
+          <div class="icon-btn">👤</div>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="greeting">
+        <small>Olá, bem-vindo 👋</small>
+        <h2>Pastor <span style="color:#666">João</span></h2>
+      </div>
+      <!-- REUSABLE: verse-card -->
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .verse-card">[REUSE] VerseCard</span>
+        <div class="verse-box">
+          <div class="label">✦ Versículo do dia</div>
+          <div class="text">"Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento."</div>
+          <div class="ref">— Provérbios 3:5-6</div>
+        </div>
+      </div>
+      <!-- REUSABLE: bento-stats -->
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .bento-stats">[REUSE] BentoStats</span>
+        <div class="bento-stats-bar">
+          <div class="bento-stat">
+            <div class="num">12</div>
+            <div class="lbl">Membros</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="bento-stat">
+            <div class="num">5</div>
+            <div class="lbl">Sermões</div>
+          </div>
+        </div>
+      </div>
+      <!-- REUSABLE: bento-actions-grid -->
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .bento-actions-grid">[REUSE] BentoGrid</span>
+        <div class="bento-grid">
+          <div class="bento-card">
+            <div class="bc-icon">📖</div>
+            <h4>Bíblia Digital</h4>
+            <p>Áudio & Leitura</p>
+          </div>
+          <div class="bento-card">
+            <div class="bc-icon">🎵</div>
+            <h4>Harpa Cristã</h4>
+            <p>Letras e Cifras</p>
+          </div>
+          <div class="bento-card">
+            <div class="bc-icon">👥</div>
+            <h4>Gestão</h4>
+            <p>Membros</p>
+          </div>
+          <div class="bento-card">
+            <div class="bc-icon">✨</div>
+            <h4>Sermões</h4>
+            <p>IA Assistente</p>
+          </div>
+        </div>
+      </div>
+      <div class="section-lbl">Continue de onde parou</div>
+      <!-- REUSABLE: continue-card -->
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .continue-card">[REUSE] ContinueCard</span>
+        <div class="continue-box">
+          <div class="cb-icon">📝</div>
+          <div class="cb-text" style="flex:1">
+            <h5>Escola Dominical</h5>
+            <p>O Fruto do Espírito: Benignidade</p>
+          </div>
+          <span style="color:#ccc">→</span>
+        </div>
+      </div>
+    </div>
+    <!-- REUSABLE: bottom-nav -->
+    <div class="rel">
+      <span class="badge-reuse" title="index.html .bottom-nav">[REUSE] BottomNav</span>
+      <div class="bottom-nav">
+        <div class="nav-tab active"><div class="nav-ico">🏠</div>Início</div>
+        <div class="nav-tab"><div class="nav-ico">👥</div>Membros</div>
+        <div class="nav-tab"><div class="nav-ico">📖</div>Estudo</div>
+        <div class="nav-tab"><div class="nav-ico">🎵</div>Culto</div>
+        <div class="nav-tab"><div class="nav-ico">📝</div>EBD</div>
+        <div class="nav-tab"><div class="nav-ico">👤</div>Perfil</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 3. MEMBROS ======== -->
+<div class="screen-section" id="membros1">
+  <div class="screen-label">3. Tela Membros</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header">
+      <div class="header-left">
+        <div style="font-size:1.1rem;cursor:pointer">←</div>
+        <div class="header-text"><h2>Membros da Igreja</h2></div>
+      </div>
+      <div class="header-icons"><div class="icon-btn">12</div></div>
+    </div>
+    <div class="content" style="position:relative">
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .search-bar">[REUSE] SearchBar</span>
+        <div class="search-bar">
+          <span>🔍</span>
+          <input type="text" placeholder="Buscar por nome ou cargo...">
+        </div>
+      </div>
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .filter-chips">[REUSE] FilterChips</span>
+        <div class="chips">
+          <div class="chip active">Todos</div>
+          <div class="chip">Ativos</div>
+          <div class="chip">Inativos</div>
+        </div>
+      </div>
+      <!-- REUSABLE: member-item -->
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .member-item">[REUSE] MemberItem</span>
+        <div class="member-row">
+          <div class="avatar">MA</div>
+          <div class="member-info"><h5>Maria Aparecida dos Santos</h5><span>Líder do Louvor</span></div>
+          <div class="status-pill ativo">Ativo</div>
+        </div>
+        <div class="member-row">
+          <div class="avatar">JC</div>
+          <div class="member-info"><h5>José Carlos Oliveira</h5><span>Diácono</span></div>
+          <div class="status-pill ativo">Ativo</div>
+        </div>
+        <div class="member-row">
+          <div class="avatar">AP</div>
+          <div class="member-info"><h5>Ana Paula Ferreira</h5><span>Professora EBD</span></div>
+          <div class="status-pill ativo">Ativo</div>
+        </div>
+        <div class="member-row">
+          <div class="avatar">FA</div>
+          <div class="member-info"><h5>Fernando Augusto</h5><span>Cooperador</span></div>
+          <div class="status-pill inativo">Inativo</div>
+        </div>
+      </div>
+      <div class="fab" style="position:relative;bottom:auto;right:auto;margin:20px 0 0 auto;width:48px">+</div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-tab"><div class="nav-ico">🏠</div>Início</div>
+      <div class="nav-tab active"><div class="nav-ico">👥</div>Membros</div>
+      <div class="nav-tab"><div class="nav-ico">📖</div>Estudo</div>
+      <div class="nav-tab"><div class="nav-ico">🎵</div>Culto</div>
+      <div class="nav-tab"><div class="nav-ico">📝</div>EBD</div>
+      <div class="nav-tab"><div class="nav-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 4. BÍBLIA ======== -->
+<div class="screen-section" id="biblia1">
+  <div class="screen-label">4. Bíblia Digital</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header">
+      <div class="header-left">
+        <div style="font-size:1.1rem">←</div>
+        <div class="header-text"><h2>Bíblia Digital</h2></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .tabs">[REUSE] Tabs</span>
+        <div class="tabs-bar">
+          <div class="tab active">Livros</div>
+          <div class="tab">Player</div>
+          <div class="tab">Favoritos</div>
+        </div>
+      </div>
+      <div class="search-bar"><span>🔍</span><input placeholder="Buscar livro..."></div>
+      <div class="chips">
+        <div class="chip active">Todos</div>
+        <div class="chip">AT</div>
+        <div class="chip">NT</div>
+      </div>
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .bible-book-grid">[REUSE] BibleGrid</span>
+        <div class="bible-grid">
+          <div class="bible-item">Gênesis</div>
+          <div class="bible-item">Êxodo</div>
+          <div class="bible-item">Levítico</div>
+          <div class="bible-item">Números</div>
+          <div class="bible-item">Deuter.</div>
+          <div class="bible-item">Josué</div>
+          <div class="bible-item">Juízes</div>
+          <div class="bible-item">Rute</div>
+          <div class="bible-item">1 Samuel</div>
+          <div class="bible-item">2 Samuel</div>
+          <div class="bible-item">1 Reis</div>
+          <div class="bible-item">2 Reis</div>
+        </div>
+      </div>
+      <div style="margin-top:24px">
+        <div class="section-lbl">Player de Áudio</div>
+        <div class="rel">
+          <span class="badge-reuse" title="styles.css .audio-player">[REUSE] AudioPlayer</span>
+          <div class="player-box">
+            <h3>Gênesis</h3>
+            <div class="p-sub">Capítulo 1</div>
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <div class="p-times"><span>2:15</span><span>12:30</span></div>
+            <div class="p-controls">
+              <div class="p-btn">⟲10</div>
+              <div class="p-btn main">▶</div>
+              <div class="p-btn">10⟳</div>
+            </div>
+            <div class="speed-row">
+              <span>Velocidade</span>
+              <div class="speed-btns">
+                <div class="spd-btn">0.75x</div>
+                <div class="spd-btn active">1x</div>
+                <div class="spd-btn">1.25x</div>
+                <div class="spd-btn">1.5x</div>
+                <div class="spd-btn">2x</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-tab"><div class="nav-ico">🏠</div>Início</div>
+      <div class="nav-tab"><div class="nav-ico">👥</div>Membros</div>
+      <div class="nav-tab active"><div class="nav-ico">📖</div>Estudo</div>
+      <div class="nav-tab"><div class="nav-ico">🎵</div>Culto</div>
+      <div class="nav-tab"><div class="nav-ico">📝</div>EBD</div>
+      <div class="nav-tab"><div class="nav-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 5. SERMÕES ======== -->
+<div class="screen-section" id="sermao1">
+  <div class="screen-label">5. Sermões + IA Assistente</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header">
+      <div class="header-left">
+        <div style="font-size:1.1rem">←</div>
+        <div class="header-text"><h2>Sermões</h2></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="tabs-bar">
+        <div class="tab active">Meus Sermões</div>
+        <div class="tab">🤖 IA</div>
+        <div class="tab">Esboços</div>
+      </div>
+      <div class="search-bar"><span>🔍</span><input placeholder="Buscar sermão..."></div>
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .list-item">[REUSE] ListItem</span>
+        <div class="mod-card">
+          <div class="mc-icon">📄</div>
+          <div class="mc-text"><h5>A fé que move montanhas</h5><p>Mateus 17:20 • 15/03/2025</p></div>
+          <div class="mc-arrow">→</div>
+        </div>
+        <div class="mod-card">
+          <div class="mc-icon">📄</div>
+          <div class="mc-text"><h5>O amor que transforma</h5><p>1 Coríntios 13 • 08/03/2025</p></div>
+          <div class="mc-arrow">→</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding-top:16px;border-top:2px dashed #ddd">
+        <div class="section-lbl" style="margin-top:0">Aba: Assistente IA</div>
+        <div class="ia-hero">
+          <div class="ia-icon">🤖</div>
+          <div><h3>Assistente de Pregação</h3><p style="font-size:0.65rem;color:#999">Gere um esboço com referências bíblicas</p></div>
+        </div>
+        <div class="rel">
+          <span class="badge-reuse" title="index.html .ia-form-card">[REUSE] IAFormCard</span>
+          <div class="ia-form">
+            <div class="ia-field"><label>📌 Tema da Pregação *</label><input placeholder="Ex: A fé que move montanhas"></div>
+            <div class="ia-field"><label>📖 Versículo Base</label><input placeholder="Ex: Hebreus 11:1"></div>
+            <div class="ia-field">
+              <label>🎯 Objetivo</label>
+              <div class="obj-chips">
+                <div class="obj-chip active">💛 Consolo</div>
+                <div class="obj-chip">🔥 Exortação</div>
+                <div class="obj-chip">🌍 Evangelismo</div>
+                <div class="obj-chip">📖 Ensino</div>
+                <div class="obj-chip">💪 Encorajamento</div>
+              </div>
+            </div>
+            <div class="ia-generate-btn">✨ Gerar Esboço com IA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-tab"><div class="nav-ico">🏠</div>Início</div>
+      <div class="nav-tab"><div class="nav-ico">👥</div>Membros</div>
+      <div class="nav-tab active"><div class="nav-ico">📖</div>Estudo</div>
+      <div class="nav-tab"><div class="nav-ico">🎵</div>Culto</div>
+      <div class="nav-tab"><div class="nav-ico">📝</div>EBD</div>
+      <div class="nav-tab"><div class="nav-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 6. HARPA ======== -->
+<div class="screen-section" id="harpa1">
+  <div class="screen-label">6. Harpa Cristã</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header">
+      <div class="header-left">
+        <div style="font-size:1.1rem">←</div>
+        <div class="header-text"><h2>Harpa Cristã</h2></div>
+      </div>
+    </div>
+    <div class="content" style="padding-bottom:80px">
+      <div class="tabs-bar">
+        <div class="tab active">Todos</div>
+        <div class="tab">⭐ Favoritos</div>
+      </div>
+      <div class="search-bar"><span>🔍</span><input placeholder="Buscar hino..."></div>
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .list-item">[REUSE] HymnItem</span>
+        <div class="mod-card">
+          <div class="mc-icon" style="background:#eee;font-weight:bold;font-size:0.8rem">001</div>
+          <div class="mc-text"><h5>Chuvas de Graça</h5><p>Louvor e Adoração</p></div>
+          <div class="mc-arrow">→</div>
+        </div>
+        <div class="mod-card">
+          <div class="mc-icon" style="background:#eee;font-weight:bold;font-size:0.8rem">002</div>
+          <div class="mc-text"><h5>Saudai o Nome de Jesus</h5><p>Louvor e Adoração</p></div>
+          <div class="mc-arrow">→</div>
+        </div>
+        <div class="mod-card">
+          <div class="mc-icon" style="background:#eee;font-weight:bold;font-size:0.8rem">003</div>
+          <div class="mc-text"><h5>Rude Cruz</h5><p>Paixão de Cristo</p></div>
+          <div class="mc-arrow">→</div>
+        </div>
+      </div>
+    </div>
+    <!-- Floating Player -->
+    <div class="rel" style="margin-bottom:0">
+      <span class="badge-reuse" title="index.html .harpa-floating-player">[REUSE] FloatingPlayer</span>
+      <div class="float-player" style="margin:0;border-radius:0">
+        <div class="fp-progress"><div class="fp-progress-fill"></div></div>
+        <div class="fp-body">
+          <div class="fp-info"><h5>001 — Chuvas de Graça</h5><span>Louvor e Adoração</span></div>
+          <div class="fp-controls">
+            <div class="fp-btn">⏮</div>
+            <div class="fp-btn play">▶</div>
+            <div class="fp-btn">⏭</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-tab"><div class="nav-ico">🏠</div>Início</div>
+      <div class="nav-tab"><div class="nav-ico">👥</div>Membros</div>
+      <div class="nav-tab"><div class="nav-ico">📖</div>Estudo</div>
+      <div class="nav-tab active"><div class="nav-ico">🎵</div>Culto</div>
+      <div class="nav-tab"><div class="nav-ico">📝</div>EBD</div>
+      <div class="nav-tab"><div class="nav-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 7. EBD ======== -->
+<div class="screen-section" id="escola1">
+  <div class="screen-label">7. Escola Dominical</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header">
+      <div class="header-left">
+        <div style="font-size:1.1rem">←</div>
+        <div class="header-text"><h2>Escola Dominical</h2></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .module-hero">[REUSE] ModuleHero</span>
+        <div class="module-hero">
+          <div class="mh-icon">📝</div>
+          <div><h3>Escola Dominical</h3><p>Caderneta com anotações pessoais</p></div>
+        </div>
+      </div>
+      <div class="tabs-bar">
+        <div class="tab active">Todas</div>
+        <div class="tab">Pendentes</div>
+        <div class="tab">Concluídas</div>
+      </div>
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .lesson-card">[REUSE] LessonCard</span>
+        <div class="lesson-row">
+          <div class="lr-top"><span class="lr-date">30/03/2025</span><span class="status-pill ativo" style="background:#e6f7ef;color:#2e7d32">Concluída</span></div>
+          <h5>O Fruto do Espírito: Benignidade</h5>
+          <div class="lr-ref">Gálatas 5:22-23</div>
+          <div class="lr-preview">A benignidade como manifestação prática do caráter cristão...</div>
+        </div>
+        <div class="lesson-row">
+          <div class="lr-top"><span class="lr-date">06/04/2025</span><span class="status-pill inativo" style="background:#fff3e0;color:#e65100">Pendente</span></div>
+          <h5>O Sermão do Monte</h5>
+          <div class="lr-ref">Mateus 5:1-12</div>
+          <div class="lr-preview">As bem-aventuranças e seu significado para a vida cristã...</div>
+        </div>
+      </div>
+      <div class="fab" style="position:relative;bottom:auto;right:auto;margin:16px 0 0 auto;width:48px">+</div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-tab"><div class="nav-ico">🏠</div>Início</div>
+      <div class="nav-tab"><div class="nav-ico">👥</div>Membros</div>
+      <div class="nav-tab"><div class="nav-ico">📖</div>Estudo</div>
+      <div class="nav-tab"><div class="nav-ico">🎵</div>Culto</div>
+      <div class="nav-tab active"><div class="nav-ico">📝</div>EBD</div>
+      <div class="nav-tab"><div class="nav-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 8. CULTO ======== -->
+<div class="screen-section" id="culto1">
+  <div class="screen-label">8. Apoio ao Culto</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header">
+      <div class="header-left">
+        <div style="font-size:1.1rem">←</div>
+        <div class="header-text"><h2>Apoio ao Culto</h2></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .module-hero">[REUSE] ModuleHero</span>
+        <div class="module-hero">
+          <div class="mh-icon">🎵</div>
+          <div><h3>Apoio ao Culto</h3><p>Harpa, cerimonial e leitura bíblica</p></div>
+        </div>
+      </div>
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .module-card">[REUSE] ModuleCard</span>
+        <div class="mod-card">
+          <div class="mc-icon">🎵</div>
+          <div class="mc-text"><h5>Harpa Cristã</h5><p>Hinos com letra e áudio</p></div>
+          <div class="mc-arrow">→</div>
+        </div>
+        <div class="mod-card">
+          <div class="mc-icon">📋</div>
+          <div class="mc-text"><h5>Cerimonial Bíblico</h5><p>Santa Ceia, Batismo e mais</p></div>
+          <div class="mc-arrow">→</div>
+        </div>
+        <div class="mod-card">
+          <div class="mc-icon">📖</div>
+          <div class="mc-text"><h5>Bíblia em Áudio</h5><p>Leitura bíblica para o culto</p></div>
+          <div class="mc-arrow">→</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-tab"><div class="nav-ico">🏠</div>Início</div>
+      <div class="nav-tab"><div class="nav-ico">👥</div>Membros</div>
+      <div class="nav-tab"><div class="nav-ico">📖</div>Estudo</div>
+      <div class="nav-tab active"><div class="nav-ico">🎵</div>Culto</div>
+      <div class="nav-tab"><div class="nav-ico">📝</div>EBD</div>
+      <div class="nav-tab"><div class="nav-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 9. PERFIL ======== -->
+<div class="screen-section" id="perfil1">
+  <div class="screen-label">9. Perfil</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header">
+      <div class="header-left">
+        <div style="font-size:1.1rem">←</div>
+        <div class="header-text"><h2>Perfil</h2></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .profile-header">[REUSE] ProfileHeader</span>
+        <div class="profile-head">
+          <div class="profile-avatar-big">PJ</div>
+          <h3>Pastor João Silva</h3>
+          <div class="role">Pastor Titular</div>
+          <div class="church">Igreja Evangélica Vida Nova</div>
+        </div>
+      </div>
+      <div class="section-lbl">Configuração da Igreja</div>
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .config-card">[REUSE] ChurchConfig</span>
+        <div class="config-card">
+          <div class="config-logo-row">
+            <div class="config-logo">⛪</div>
+            <div><div style="font-size:0.6rem;color:#666;font-weight:bold;text-transform:uppercase">Logo da Igreja</div><div class="config-logo-btn">📷 Enviar Logo</div></div>
+          </div>
+          <div class="config-field"><label>Nome da Igreja</label><input placeholder="Ex: Igreja Vida Nova"></div>
+          <div class="config-field"><label>Nome do Pastor</label><input placeholder="Ex: Pastor João"></div>
+          <div class="save-config-btn">✅ Salvar Configurações</div>
+        </div>
+      </div>
+      <div class="section-lbl">Minha Conta</div>
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .profile-menu-item">[REUSE] ProfileMenuItem</span>
+        <div class="menu-item"><div class="mi-icon">👤</div><div class="mi-text"><h5>Dados Pessoais</h5><p>Nome, telefone, e-mail</p></div><div class="mi-arrow">→</div></div>
+        <div class="menu-item"><div class="mi-icon">⭐</div><div class="mi-text"><h5>Meus Favoritos</h5><p>Hinos e versículos salvos</p></div><div class="mi-arrow">→</div></div>
+        <div class="menu-item"><div class="mi-icon">📊</div><div class="mi-text"><h5>Minha Atividade</h5><p>Histórico e estatísticas</p></div><div class="mi-arrow">→</div></div>
+      </div>
+      <div class="section-lbl" style="margin-top:14px">Configurações</div>
+      <div class="menu-item"><div class="mi-icon">⚙️</div><div class="mi-text"><h5>Preferências</h5><p>Notificações, tema</p></div><div class="mi-arrow">→</div></div>
+      <div class="menu-item"><div class="mi-icon">🔒</div><div class="mi-text"><h5>Privacidade</h5><p>Dados e segurança</p></div><div class="mi-arrow">→</div></div>
+      <div class="rel">
+        <span class="badge-reuse" title="styles.css .premium-card">[REUSE] PremiumCard</span>
+        <div class="premium-box">
+          <div class="pbadge">Em breve</div>
+          <h4>Plano Premium</h4>
+          <p>Backup na nuvem, relatórios avançados, multi-usuários e muito mais.</p>
+        </div>
+      </div>
+      <div class="logout-btn">🚪 Sair da Conta</div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-tab"><div class="nav-ico">🏠</div>Início</div>
+      <div class="nav-tab"><div class="nav-ico">👥</div>Membros</div>
+      <div class="nav-tab"><div class="nav-ico">📖</div>Estudo</div>
+      <div class="nav-tab"><div class="nav-ico">🎵</div>Culto</div>
+      <div class="nav-tab"><div class="nav-ico">📝</div>EBD</div>
+      <div class="nav-tab active"><div class="nav-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

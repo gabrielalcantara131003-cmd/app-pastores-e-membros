@@ -1,0 +1,23 @@
+{
+  "packageId": "com.pastoresemembros.app",
+  "host": "app-igreja-red.vercel.app",
+  "name": "Pastores E Membros",
+  "launcherName": "Ministerial",
+  "display": "standalone",
+  "themeColor": "#0f172a",
+  "navigationColor": "#0a0c10",
+  "background_color": "#0a0c10",
+  "startUrl": "/?source=pwa",
+  "iconUrl": "https://app-igreja-red.vercel.app/icon-512.png",
+  "maskableIconUrl": "https://app-igreja-red.vercel.app/icon-512.png",
+  "appVersion": "1.0.0",
+  "appVersionCode": 1,
+  "signingKey": {
+    "path": "./my-release-key.keystore",
+    "alias": "my-key-alias"
+  },
+  "enableNotifications": true,
+  "orientation": "portrait",
+  "fingerprints": [],
+  "additionalTrustedOrigins": []
+}

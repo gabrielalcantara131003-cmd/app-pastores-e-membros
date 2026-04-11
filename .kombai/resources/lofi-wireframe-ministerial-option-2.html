@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe Opção 2 — Moderna</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Comic Sans MS', 'Segoe Print', cursive; background: #e8e8e8; color: #333; padding: 24px; }
+  h1.page-title { text-align: center; font-size: 1.6rem; margin-bottom: 8px; color: #222; }
+  p.page-desc { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 32px; max-width: 700px; margin-left: auto; margin-right: auto; }
+  .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 40px; }
+  .nav-links a { background: #fff; border: 2px solid #999; border-radius: 20px; padding: 6px 16px; font-size: 0.8rem; color: #333; text-decoration: none; }
+  .nav-links a:hover { background: #ddd; }
+  .screen-section { max-width: 430px; margin: 0 auto 60px; }
+  .screen-label { font-size: 1.1rem; font-weight: bold; color: #444; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px dashed #aaa; }
+  .phone { background: #fff; border: 3px solid #666; border-radius: 32px; overflow: hidden; box-shadow: 4px 4px 0 #bbb; }
+  .status-bar { background: #f5f5f5; padding: 6px 16px; display: flex; justify-content: space-between; font-size: 0.65rem; color: #999; border-bottom: 1px solid #ddd; }
+  .badge-reuse { position: absolute; top: -6px; right: -6px; background: #4CAF50; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 9px; font-family: Arial, sans-serif; font-weight: bold; z-index: 10; white-space: nowrap; }
+  .badge-new { position: absolute; top: -6px; right: -6px; background: #FF9800; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 9px; font-family: Arial, sans-serif; font-weight: bold; z-index: 10; white-space: nowrap; }
+  .rel { position: relative; }
+  .content { padding: 16px; min-height: 500px; }
+  .section-lbl { font-size: 0.6rem; color: #999; text-transform: uppercase; letter-spacing: 0.1em; font-weight: bold; margin-bottom: 10px; margin-top: 16px; }
+
+  /* === OPTION 2 UNIQUE STYLES === */
+  /* Header with integrated search */
+  .header-v2 { background: #f5f5f5; padding: 12px 16px 8px; border-bottom: 2px solid #ddd; }
+  .header-v2-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .header-v2-left { display: flex; align-items: center; gap: 10px; }
+  .logo-v2 { width: 32px; height: 32px; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
+  .header-v2-title h2 { font-size: 0.85rem; color: #222; }
+  .header-v2-title span { font-size: 0.6rem; color: #999; }
+  .header-v2-icons { display: flex; gap: 6px; }
+  .hv2-btn { width: 30px; height: 30px; border: 2px solid #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; background: #fff; }
+  .search-inline { display: flex; align-items: center; background: #fff; border: 2px solid #ddd; border-radius: 20px; padding: 8px 14px; gap: 8px; }
+  .search-inline input { background: none; border: none; font-family: inherit; font-size: 0.75rem; flex: 1; outline: none; }
+  /* Bottom nav v2 — 5 items with highlight center */
+  .bottom-nav-v2 { display: flex; align-items: flex-end; justify-content: space-around; padding: 6px 8px 12px; background: #f5f5f5; border-top: 2px solid #ddd; }
+  .nav2-tab { text-align: center; font-size: 0.55rem; color: #999; flex: 1; }
+  .nav2-tab .n2-ico { width: 24px; height: 24px; border: 2px solid #ccc; border-radius: 6px; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+  .nav2-tab.active .n2-ico { background: #333; border-color: #333; color: #fff; }
+  .nav2-tab.active { color: #333; font-weight: bold; }
+  .nav2-center { margin-top: -20px; }
+  .nav2-center .n2-ico { width: 48px; height: 48px; border-radius: 50%; background: #333; border: 3px solid #f5f5f5; color: #fff; font-size: 1.2rem; }
+  /* Cards with thumbnail */
+  .thumb-card { display: flex; background: #f5f5f5; border: 2px solid #ddd; border-radius: 14px; overflow: hidden; margin-bottom: 10px; }
+  .thumb-img { width: 80px; min-height: 80px; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+  .thumb-text { padding: 12px; flex: 1; }
+  .thumb-text h5 { font-size: 0.8rem; color: #222; margin-bottom: 3px; }
+  .thumb-text p { font-size: 0.6rem; color: #999; line-height: 1.4; }
+  .thumb-text .meta { font-size: 0.55rem; color: #aaa; margin-top: 6px; }
+  /* Hero card v2 */
+  .hero-card-v2 { background: #333; color: #fff; border-radius: 20px; padding: 24px; margin-bottom: 16px; position: relative; overflow: hidden; }
+  .hero-card-v2::after { content: '"'; position: absolute; top: -10px; right: 10px; font-size: 6rem; color: rgba(255,255,255,0.06); font-family: Georgia, serif; }
+  .hero-card-v2 .label { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 10px; }
+  .hero-card-v2 .text { font-style: italic; font-size: 0.9rem; line-height: 1.7; margin-bottom: 10px; }
+  .hero-card-v2 .ref { font-size: 0.75rem; color: #999; font-weight: bold; }
+  /* Stat chips */
+  .stat-chips { display: flex; gap: 8px; margin-bottom: 16px; }
+  .stat-chip { flex: 1; background: #f5f5f5; border: 2px solid #ddd; border-radius: 14px; padding: 12px; text-align: center; }
+  .stat-chip .sc-num { font-size: 1.3rem; font-weight: bold; color: #222; }
+  .stat-chip .sc-lbl { font-size: 0.55rem; color: #999; text-transform: uppercase; }
+  /* Feature row — horizontal scroll */
+  .feature-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; }
+  .feature-scroll::-webkit-scrollbar { display: none; }
+  .feature-item { min-width: 130px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 18px; padding: 18px 14px; text-align: center; flex-shrink: 0; }
+  .feature-item .fi-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .feature-item h5 { font-size: 0.75rem; color: #222; margin-bottom: 2px; }
+  .feature-item p { font-size: 0.6rem; color: #999; }
+  /* Chips, search, tabs etc. reused from option 1 */
+  .chips { display: flex; gap: 6px; margin-bottom: 14px; }
+  .chip { padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: bold; border: 2px solid #ccc; background: #fff; color: #666; }
+  .chip.active { background: #333; color: #fff; border-color: #333; }
+  .tabs-bar { display: flex; background: #eee; border-radius: 20px; padding: 3px; margin-bottom: 14px; }
+  .tab { flex: 1; text-align: center; padding: 8px; font-size: 0.7rem; border-radius: 18px; color: #999; font-weight: bold; }
+  .tab.active { background: #fff; color: #333; box-shadow: 1px 1px 0 #ccc; }
+  .member-row { display: flex; align-items: center; gap: 10px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; flex-shrink: 0; }
+  .member-info { flex: 1; }
+  .member-info h5 { font-size: 0.8rem; color: #222; }
+  .member-info span { font-size: 0.6rem; color: #999; }
+  .status-pill { padding: 3px 8px; border-radius: 10px; font-size: 0.55rem; font-weight: bold; }
+  .status-pill.ativo { background: #e6f7ef; color: #2e7d32; }
+  .status-pill.inativo { background: #fde8e8; color: #c62828; }
+  .fab { width: 48px; height: 48px; background: #333; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 3px 3px 0 #999; }
+  .search-bar { display: flex; align-items: center; background: #f5f5f5; border: 2px solid #ddd; border-radius: 24px; padding: 10px 16px; margin-bottom: 12px; gap: 8px; }
+  .search-bar input { background: none; border: none; font-family: inherit; font-size: 0.8rem; flex: 1; outline: none; }
+  .mod-card { display: flex; align-items: center; gap: 12px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 14px; padding: 14px; margin-bottom: 8px; }
+  .mod-card .mc-icon { width: 44px; height: 44px; border-radius: 12px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .mod-card .mc-text { flex: 1; }
+  .mod-card .mc-text h5 { font-size: 0.8rem; color: #222; }
+  .mod-card .mc-text p { font-size: 0.6rem; color: #999; }
+  .mod-card .mc-arrow { color: #ccc; font-size: 0.9rem; }
+  .module-hero { background: #333; color: #fff; border-radius: 16px; padding: 18px; display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .module-hero .mh-icon { font-size: 1.6rem; }
+  .module-hero h3 { font-size: 0.95rem; }
+  .module-hero p { font-size: 0.65rem; color: #aaa; }
+  .player-box { background: #333; color: #fff; border-radius: 16px; padding: 20px; text-align: center; }
+  .player-box h3 { font-size: 1rem; margin-bottom: 4px; }
+  .player-box .p-sub { font-size: 0.65rem; color: #aaa; margin-bottom: 16px; }
+  .progress-bar { height: 4px; background: #555; border-radius: 2px; margin-bottom: 6px; }
+  .progress-fill { height: 100%; width: 35%; background: #ccc; border-radius: 2px; }
+  .p-times { display: flex; justify-content: space-between; font-size: 0.55rem; color: #777; margin-bottom: 16px; }
+  .p-controls { display: flex; justify-content: center; align-items: center; gap: 20px; }
+  .p-btn { width: 36px; height: 36px; border: 2px solid #777; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #aaa; background: none; }
+  .p-btn.main { width: 50px; height: 50px; background: #fff; color: #333; border: none; font-size: 1rem; }
+  /* Auth v2 — centered card */
+  .auth-v2 { padding: 32px 16px; }
+  .auth-v2-card { background: #f5f5f5; border: 3px solid #ddd; border-radius: 24px; padding: 28px 20px; }
+  .auth-v2-brand { text-align: center; margin-bottom: 20px; }
+  .auth-v2-logo { width: 56px; height: 56px; background: #333; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: bold; margin: 0 auto 10px; }
+  .auth-v2-brand h2 { font-size: 1.2rem; color: #222; margin-bottom: 4px; }
+  .auth-v2-brand p { font-size: 0.7rem; color: #999; }
+  .auth-tabs { display: flex; background: #e0e0e0; border-radius: 12px; padding: 3px; margin-bottom: 16px; }
+  .auth-tab { flex: 1; text-align: center; padding: 8px; font-size: 0.75rem; border-radius: 10px; color: #999; font-weight: bold; }
+  .auth-tab.active { background: #fff; color: #333; box-shadow: 1px 1px 0 #ccc; }
+  .auth-field { margin-bottom: 12px; }
+  .auth-field label { display: block; font-size: 0.6rem; color: #666; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; font-weight: bold; }
+  .auth-field input { width: 100%; padding: 12px; background: #fff; border: 2px solid #ddd; border-radius: 12px; font-family: inherit; font-size: 0.85rem; }
+  .auth-submit { width: 100%; padding: 12px; background: #333; border: none; border-radius: 12px; color: #fff; font-family: inherit; font-size: 0.9rem; font-weight: bold; margin-top: 8px; }
+  .auth-social { display: flex; gap: 10px; margin-top: 16px; }
+  .social-btn { flex: 1; padding: 10px; border: 2px solid #ddd; border-radius: 12px; text-align: center; font-size: 0.75rem; font-weight: bold; background: #fff; }
+  .auth-toggle-text { text-align: center; font-size: 0.7rem; color: #999; margin-top: 16px; }
+  /* Profile v2 */
+  .profile-v2-head { display: flex; align-items: center; gap: 14px; padding: 16px 0; margin-bottom: 8px; }
+  .profile-v2-avatar { width: 56px; height: 56px; border-radius: 50%; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold; flex-shrink: 0; }
+  .profile-v2-info h3 { font-size: 0.95rem; color: #222; }
+  .profile-v2-info .role { font-size: 0.65rem; color: #666; }
+  .profile-v2-info .church { font-size: 0.6rem; color: #999; }
+  .menu-item { display: flex; align-items: center; gap: 10px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; }
+  .menu-item .mi-icon { width: 34px; height: 34px; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+  .menu-item .mi-text { flex: 1; }
+  .menu-item .mi-text h5 { font-size: 0.8rem; color: #333; }
+  .menu-item .mi-text p { font-size: 0.6rem; color: #999; }
+  .menu-item .mi-arrow { color: #ccc; }
+  .premium-box { background: #333; color: #fff; border-radius: 16px; padding: 18px; margin-top: 16px; }
+  .premium-box .pbadge { display: inline-block; background: #999; color: #fff; font-size: 0.5rem; padding: 2px 8px; border-radius: 8px; text-transform: uppercase; font-weight: bold; margin-bottom: 8px; }
+  .premium-box h4 { font-size: 0.9rem; margin-bottom: 4px; }
+  .premium-box p { font-size: 0.65rem; color: #aaa; line-height: 1.5; }
+  .logout-btn { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; background: #fff; font-family: inherit; font-size: 0.8rem; color: #c62828; font-weight: bold; margin-top: 16px; text-align: center; }
+  .ia-hero { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .ia-hero .ia-icon { font-size: 2rem; }
+  .ia-hero h3 { font-size: 0.95rem; color: #222; }
+  .ia-hero p { font-size: 0.65rem; color: #999; }
+  .ia-form { background: #f5f5f5; border: 2px solid #ddd; border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .ia-field { margin-bottom: 12px; }
+  .ia-field label { display: block; font-size: 0.6rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; font-weight: bold; }
+  .ia-field input { width: 100%; padding: 10px 12px; background: #fff; border: 2px solid #ddd; border-radius: 10px; font-family: inherit; font-size: 0.8rem; }
+  .obj-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .obj-chip { padding: 6px 12px; border-radius: 16px; font-size: 0.65rem; font-weight: bold; border: 2px solid #ccc; background: #fff; color: #666; }
+  .obj-chip.active { background: #333; color: #fff; border-color: #333; }
+  .ia-generate-btn { width: 100%; padding: 12px; background: #333; border: none; border-radius: 12px; color: #fff; font-family: inherit; font-size: 0.85rem; font-weight: bold; }
+  .config-card { background: #f5f5f5; border: 2px solid #ddd; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+  .config-field { margin-bottom: 10px; }
+  .config-field label { display: block; font-size: 0.6rem; color: #666; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+  .config-field input { width: 100%; padding: 8px 12px; background: #fff; border: 2px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.8rem; }
+  .float-player { background: #f5f5f5; border: 2px solid #ddd; border-radius: 14px; margin: 0 16px; padding: 0; overflow: hidden; }
+  .fp-progress { height: 3px; background: #ddd; }
+  .fp-progress-fill { height: 100%; width: 40%; background: #666; }
+  .fp-body { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+  .fp-info { flex: 1; }
+  .fp-info h5 { font-size: 0.75rem; color: #222; }
+  .fp-info span { font-size: 0.6rem; color: #999; }
+  .fp-controls { display: flex; gap: 6px; align-items: center; }
+  .fp-btn { width: 28px; height: 28px; border: 2px solid #999; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; background: #fff; color: #333; }
+  .fp-btn.play { width: 36px; height: 36px; background: #333; color: #fff; border-color: #333; font-size: 0.8rem; }
+  .lesson-row { background: #f5f5f5; border: 2px solid #ddd; border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+  .lesson-row .lr-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .lesson-row .lr-top .lr-date { font-size: 0.6rem; color: #999; }
+  .lesson-row h5 { font-size: 0.8rem; color: #222; margin-bottom: 2px; }
+  .lesson-row .lr-ref { font-size: 0.65rem; color: #666; font-weight: bold; }
+  .speed-row { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid #555; }
+  .speed-row span { font-size: 0.6rem; color: #777; }
+  .speed-btns { display: flex; gap: 4px; }
+  .spd-btn { padding: 4px 8px; font-size: 0.55rem; border-radius: 10px; border: 1px solid #666; color: #aaa; background: none; font-family: inherit; font-weight: bold; }
+  .spd-btn.active { background: #fff; color: #333; border-color: #fff; }
+  .bible-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .bible-item { padding: 10px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 0.75rem; font-weight: bold; color: #333; }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Opção 2 — Moderna</h1>
+<p class="page-desc">Redesign equilibrado. Header com busca integrada, bottom nav com 5 itens e botão central destacado. Cards com thumbnails, hero sections impactantes. Acesso rápido em carrossel horizontal. Layout mais visual e dinâmico.</p>
+
+<nav class="nav-links">
+  <a href="#auth2">Login</a>
+  <a href="#inicio2">Início</a>
+  <a href="#membros2">Membros</a>
+  <a href="#biblia2">Bíblia</a>
+  <a href="#sermao2">Sermões</a>
+  <a href="#harpa2">Harpa</a>
+  <a href="#escola2">EBD</a>
+  <a href="#culto2">Culto</a>
+  <a href="#perfil2">Perfil</a>
+</nav>
+
+<!-- ======== 1. AUTH ======== -->
+<div class="screen-section" id="auth2">
+  <div class="screen-label">1. Tela de Login / Cadastro</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="content" style="min-height:auto;padding:0">
+      <div class="rel">
+        <span class="badge-new" title="Novo design de auth">[NEW] AuthCardV2</span>
+        <div class="auth-v2">
+          <div class="auth-v2-card">
+            <div class="auth-v2-brand">
+              <div class="auth-v2-logo">M</div>
+              <h2>App Ministerial</h2>
+              <p>A plataforma completa para sua igreja</p>
+            </div>
+            <div class="auth-tabs">
+              <div class="auth-tab active">Entrar</div>
+              <div class="auth-tab">Criar Conta</div>
+            </div>
+            <div class="auth-field"><label>✉ E-mail</label><input type="text" placeholder="seu@email.com"></div>
+            <div class="auth-field"><label>🔒 Senha</label><input type="password" placeholder="Sua senha"></div>
+            <div class="auth-submit">Acessar Plataforma</div>
+            <div class="rel" style="margin-top:16px">
+              <span class="badge-new" title="Novo: login social">[NEW] SocialAuth</span>
+              <div class="auth-social">
+                <div class="social-btn">G Google</div>
+                <div class="social-btn">f Facebook</div>
+              </div>
+            </div>
+            <div class="auth-toggle-text" style="margin-top:14px">Não tem conta? <span style="color:#333;text-decoration:underline">Crie agora</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 2. INÍCIO ======== -->
+<div class="screen-section" id="inicio2">
+  <div class="screen-label">2. Tela Início / Dashboard</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="rel">
+      <span class="badge-new" title="Novo header com busca integrada">[NEW] HeaderV2</span>
+      <div class="header-v2">
+        <div class="header-v2-top">
+          <div class="header-v2-left">
+            <div class="logo-v2">M</div>
+            <div class="header-v2-title"><h2>Ministerial</h2><span>Igreja Vida Nova</span></div>
+          </div>
+          <div class="header-v2-icons">
+            <div class="hv2-btn">🔔</div>
+            <div class="hv2-btn">👤</div>
+          </div>
+        </div>
+        <div class="search-inline"><span>🔍</span><input placeholder="Pesquise na Bíblia, Harpa, Dicionário..."></div>
+      </div>
+    </div>
+    <div class="content">
+      <div style="margin-bottom:12px">
+        <span style="font-size:0.75rem;color:#999">Olá, bem-vindo 👋</span>
+        <h2 style="font-size:1.3rem;color:#222">Pastor <span style="color:#666">João</span></h2>
+      </div>
+      <!-- Hero verse full-width -->
+      <div class="rel">
+        <span class="badge-reuse" title="index.html .verse-card">[REUSE] VerseCard</span>
+        <div class="hero-card-v2">
+          <div class="label">✦ Versículo do dia</div>
+          <div class="text">"Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento."</div>
+          <div class="ref">— Provérbios 3:5-6</div>
+        </div>
+      </div>
+      <!-- Stat chips inline -->
+      <div class="rel">
+        <span class="badge-new" title="Novo: stat chips">[NEW] StatChips</span>
+        <div class="stat-chips">
+          <div class="stat-chip"><div class="sc-num">12</div><div class="sc-lbl">Membros</div></div>
+          <div class="stat-chip"><div class="sc-num">5</div><div class="sc-lbl">Sermões</div></div>
+          <div class="stat-chip"><div class="sc-num">8</div><div class="sc-lbl">Lições</div></div>
+        </div>
+      </div>
+      <div class="section-lbl">Acesso Rápido</div>
+      <!-- Horizontal scroll feature cards -->
+      <div class="rel">
+        <span class="badge-new" title="Novo: scroll horizontal">[NEW] FeatureScroll</span>
+        <div class="feature-scroll">
+          <div class="feature-item"><div class="fi-icon">📖</div><h5>Bíblia Digital</h5><p>Áudio & Leitura</p></div>
+          <div class="feature-item"><div class="fi-icon">🎵</div><h5>Harpa Cristã</h5><p>Letras e Cifras</p></div>
+          <div class="feature-item"><div class="fi-icon">👥</div><h5>Gestão</h5><p>Membros</p></div>
+          <div class="feature-item"><div class="fi-icon">✨</div><h5>Sermões</h5><p>IA Assistente</p></div>
+          <div class="feature-item"><div class="fi-icon">📝</div><h5>EBD</h5><p>Lições</p></div>
+        </div>
+      </div>
+      <div class="section-lbl">Recentes</div>
+      <div class="rel">
+        <span class="badge-new" title="Novo: card com thumbnail">[NEW] ThumbCard</span>
+        <div class="thumb-card">
+          <div class="thumb-img">📝</div>
+          <div class="thumb-text">
+            <h5>Escola Dominical</h5>
+            <p>O Fruto do Espírito: Benignidade e Bondade</p>
+            <div class="meta">Última atividade: há 2 dias</div>
+          </div>
+        </div>
+        <div class="thumb-card">
+          <div class="thumb-img">📖</div>
+          <div class="thumb-text">
+            <h5>Bíblia — Gênesis 1</h5>
+            <p>Continue ouvindo de onde parou</p>
+            <div class="meta">Progresso: 45%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rel">
+      <span class="badge-new" title="Novo: bottom nav com 5 itens e centro destacado">[NEW] BottomNavV2</span>
+      <div class="bottom-nav-v2">
+        <div class="nav2-tab active"><div class="n2-ico">🏠</div>Início</div>
+        <div class="nav2-tab"><div class="n2-ico">📖</div>Estudo</div>
+        <div class="nav2-tab nav2-center"><div class="n2-ico">✝</div></div>
+        <div class="nav2-tab"><div class="n2-ico">🎵</div>Culto</div>
+        <div class="nav2-tab"><div class="n2-ico">👤</div>Perfil</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 3. MEMBROS ======== -->
+<div class="screen-section" id="membros2">
+  <div class="screen-label">3. Tela Membros</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header-v2" style="padding-bottom:12px">
+      <div class="header-v2-top">
+        <div class="header-v2-left">
+          <div style="font-size:1.1rem;cursor:pointer">←</div>
+          <div class="header-v2-title"><h2>Membros</h2><span>12 cadastrados</span></div>
+        </div>
+        <div class="header-v2-icons"><div class="hv2-btn">+</div></div>
+      </div>
+      <div class="search-inline"><span>🔍</span><input placeholder="Buscar por nome ou cargo..."></div>
+    </div>
+    <div class="content">
+      <div class="chips">
+        <div class="chip active">Todos</div>
+        <div class="chip">Ativos</div>
+        <div class="chip">Inativos</div>
+      </div>
+      <div class="member-row">
+        <div class="avatar">MA</div>
+        <div class="member-info"><h5>Maria Aparecida dos Santos</h5><span>Líder do Louvor • Sede Central</span></div>
+        <div class="status-pill ativo">Ativo</div>
+      </div>
+      <div class="member-row">
+        <div class="avatar">JC</div>
+        <div class="member-info"><h5>José Carlos Oliveira</h5><span>Diácono • Sede Central</span></div>
+        <div class="status-pill ativo">Ativo</div>
+      </div>
+      <div class="member-row">
+        <div class="avatar">AP</div>
+        <div class="member-info"><h5>Ana Paula Ferreira</h5><span>Professora EBD • Sede Central</span></div>
+        <div class="status-pill ativo">Ativo</div>
+      </div>
+      <div class="member-row">
+        <div class="avatar">FA</div>
+        <div class="member-info"><h5>Fernando Augusto</h5><span>Cooperador • Sede Central</span></div>
+        <div class="status-pill inativo">Inativo</div>
+      </div>
+    </div>
+    <div class="bottom-nav-v2">
+      <div class="nav2-tab"><div class="n2-ico">🏠</div>Início</div>
+      <div class="nav2-tab"><div class="n2-ico">📖</div>Estudo</div>
+      <div class="nav2-tab nav2-center active"><div class="n2-ico">✝</div></div>
+      <div class="nav2-tab"><div class="n2-ico">🎵</div>Culto</div>
+      <div class="nav2-tab"><div class="n2-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 4. BÍBLIA ======== -->
+<div class="screen-section" id="biblia2">
+  <div class="screen-label">4. Bíblia Digital</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header-v2">
+      <div class="header-v2-top">
+        <div class="header-v2-left">
+          <div style="font-size:1.1rem">←</div>
+          <div class="header-v2-title"><h2>Bíblia Digital</h2></div>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="tabs-bar">
+        <div class="tab active">Livros</div>
+        <div class="tab">Player</div>
+        <div class="tab">⭐ Favoritos</div>
+      </div>
+      <div class="search-bar"><span>🔍</span><input placeholder="Buscar livro..."></div>
+      <div class="chips">
+        <div class="chip active">Todos</div>
+        <div class="chip">Antigo T.</div>
+        <div class="chip">Novo T.</div>
+      </div>
+      <div class="bible-grid">
+        <div class="bible-item">Gênesis</div>
+        <div class="bible-item">Êxodo</div>
+        <div class="bible-item">Levítico</div>
+        <div class="bible-item">Números</div>
+        <div class="bible-item">Deuter.</div>
+        <div class="bible-item">Josué</div>
+        <div class="bible-item">Juízes</div>
+        <div class="bible-item">Rute</div>
+        <div class="bible-item">1 Samuel</div>
+      </div>
+      <div style="margin-top:24px">
+        <div class="section-lbl">Player de Áudio</div>
+        <div class="player-box">
+          <h3>Gênesis</h3>
+          <div class="p-sub">Capítulo 1</div>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+          <div class="p-times"><span>2:15</span><span>12:30</span></div>
+          <div class="p-controls">
+            <div class="p-btn">⟲10</div>
+            <div class="p-btn main">▶</div>
+            <div class="p-btn">10⟳</div>
+          </div>
+          <div class="speed-row">
+            <span>Velocidade</span>
+            <div class="speed-btns">
+              <div class="spd-btn">0.75x</div>
+              <div class="spd-btn active">1x</div>
+              <div class="spd-btn">1.5x</div>
+              <div class="spd-btn">2x</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav-v2">
+      <div class="nav2-tab"><div class="n2-ico">🏠</div>Início</div>
+      <div class="nav2-tab active"><div class="n2-ico">📖</div>Estudo</div>
+      <div class="nav2-tab nav2-center"><div class="n2-ico">✝</div></div>
+      <div class="nav2-tab"><div class="n2-ico">🎵</div>Culto</div>
+      <div class="nav2-tab"><div class="n2-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 5. SERMÕES ======== -->
+<div class="screen-section" id="sermao2">
+  <div class="screen-label">5. Sermões + IA Assistente</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header-v2">
+      <div class="header-v2-top">
+        <div class="header-v2-left">
+          <div style="font-size:1.1rem">←</div>
+          <div class="header-v2-title"><h2>Sermões</h2></div>
+        </div>
+        <div class="header-v2-icons"><div class="hv2-btn">+</div></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="tabs-bar">
+        <div class="tab active">Meus Sermões</div>
+        <div class="tab">🤖 IA</div>
+        <div class="tab">📋 Esboços</div>
+      </div>
+      <!-- Thumbnail cards for sermons -->
+      <div class="thumb-card">
+        <div class="thumb-img">📄</div>
+        <div class="thumb-text"><h5>A fé que move montanhas</h5><p>Mateus 17:20</p><div class="meta">15/03/2025 • 3 tópicos</div></div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img">📄</div>
+        <div class="thumb-text"><h5>O amor que transforma</h5><p>1 Coríntios 13</p><div class="meta">08/03/2025 • 4 tópicos</div></div>
+      </div>
+      <div style="margin-top:20px;padding-top:16px;border-top:2px dashed #ddd">
+        <div class="section-lbl" style="margin-top:0">Aba: Assistente IA</div>
+        <div class="ia-hero">
+          <div class="ia-icon">🤖</div>
+          <div><h3>Assistente de Pregação</h3><p style="font-size:0.65rem;color:#999">Gere um esboço com referências bíblicas</p></div>
+        </div>
+        <div class="ia-form">
+          <div class="ia-field"><label>📌 Tema *</label><input placeholder="Ex: A fé que move montanhas"></div>
+          <div class="ia-field"><label>📖 Versículo Base</label><input placeholder="Ex: Hebreus 11:1"></div>
+          <div class="ia-field">
+            <label>🎯 Objetivo</label>
+            <div class="obj-chips">
+              <div class="obj-chip active">💛 Consolo</div>
+              <div class="obj-chip">🔥 Exortação</div>
+              <div class="obj-chip">🌍 Evangelismo</div>
+              <div class="obj-chip">📖 Ensino</div>
+            </div>
+          </div>
+          <div class="ia-generate-btn">✨ Gerar Esboço com IA</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav-v2">
+      <div class="nav2-tab"><div class="n2-ico">🏠</div>Início</div>
+      <div class="nav2-tab active"><div class="n2-ico">📖</div>Estudo</div>
+      <div class="nav2-tab nav2-center"><div class="n2-ico">✝</div></div>
+      <div class="nav2-tab"><div class="n2-ico">🎵</div>Culto</div>
+      <div class="nav2-tab"><div class="n2-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 6. HARPA ======== -->
+<div class="screen-section" id="harpa2">
+  <div class="screen-label">6. Harpa Cristã</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header-v2">
+      <div class="header-v2-top">
+        <div class="header-v2-left">
+          <div style="font-size:1.1rem">←</div>
+          <div class="header-v2-title"><h2>Harpa Cristã</h2></div>
+        </div>
+      </div>
+      <div class="search-inline"><span>🔍</span><input placeholder="Buscar hino por número ou título..."></div>
+    </div>
+    <div class="content" style="padding-bottom:80px">
+      <div class="tabs-bar">
+        <div class="tab active">Todos</div>
+        <div class="tab">⭐ Favoritos</div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img" style="font-size:1rem;font-weight:bold">001</div>
+        <div class="thumb-text"><h5>Chuvas de Graça</h5><p>Louvor e Adoração</p><div class="meta">♪ Áudio disponível</div></div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img" style="font-size:1rem;font-weight:bold">002</div>
+        <div class="thumb-text"><h5>Saudai o Nome de Jesus</h5><p>Louvor e Adoração</p><div class="meta">♪ Áudio disponível</div></div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img" style="font-size:1rem;font-weight:bold">003</div>
+        <div class="thumb-text"><h5>Rude Cruz</h5><p>Paixão de Cristo</p><div class="meta">♪ Áudio disponível</div></div>
+      </div>
+    </div>
+    <div class="float-player" style="margin:0;border-radius:0;border-left:0;border-right:0">
+      <div class="fp-progress"><div class="fp-progress-fill"></div></div>
+      <div class="fp-body">
+        <div class="fp-info"><h5>001 — Chuvas de Graça</h5><span>Louvor e Adoração</span></div>
+        <div class="fp-controls">
+          <div class="fp-btn">⏮</div>
+          <div class="fp-btn play">▶</div>
+          <div class="fp-btn">⏭</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav-v2">
+      <div class="nav2-tab"><div class="n2-ico">🏠</div>Início</div>
+      <div class="nav2-tab"><div class="n2-ico">📖</div>Estudo</div>
+      <div class="nav2-tab nav2-center"><div class="n2-ico">✝</div></div>
+      <div class="nav2-tab active"><div class="n2-ico">🎵</div>Culto</div>
+      <div class="nav2-tab"><div class="n2-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 7. EBD ======== -->
+<div class="screen-section" id="escola2">
+  <div class="screen-label">7. Escola Dominical</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header-v2">
+      <div class="header-v2-top">
+        <div class="header-v2-left">
+          <div style="font-size:1.1rem">←</div>
+          <div class="header-v2-title"><h2>Escola Dominical</h2></div>
+        </div>
+        <div class="header-v2-icons"><div class="hv2-btn">+</div></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="rel">
+        <span class="badge-new" title="Novo hero com progresso">[NEW] EBDHeroProgress</span>
+        <div class="module-hero" style="flex-direction:column;text-align:center;gap:8px">
+          <div class="mh-icon">📝</div>
+          <h3>Escola Dominical</h3>
+          <p style="font-size:0.65rem;color:#aaa">Caderneta com anotações pessoais</p>
+          <div style="width:100%;background:#555;height:6px;border-radius:3px;margin-top:8px"><div style="width:60%;height:100%;background:#ccc;border-radius:3px"></div></div>
+          <div style="font-size:0.55rem;color:#aaa">60% concluído • 6 de 10 lições</div>
+        </div>
+      </div>
+      <div class="tabs-bar">
+        <div class="tab active">Todas</div>
+        <div class="tab">Pendentes</div>
+        <div class="tab">Concluídas</div>
+      </div>
+      <div class="lesson-row">
+        <div class="lr-top"><span class="lr-date">30/03/2025</span><span class="status-pill ativo" style="background:#e6f7ef;color:#2e7d32">Concluída</span></div>
+        <h5>O Fruto do Espírito: Benignidade</h5>
+        <div class="lr-ref">Gálatas 5:22-23</div>
+      </div>
+      <div class="lesson-row">
+        <div class="lr-top"><span class="lr-date">06/04/2025</span><span class="status-pill inativo" style="background:#fff3e0;color:#e65100">Pendente</span></div>
+        <h5>O Sermão do Monte</h5>
+        <div class="lr-ref">Mateus 5:1-12</div>
+      </div>
+    </div>
+    <div class="bottom-nav-v2">
+      <div class="nav2-tab"><div class="n2-ico">🏠</div>Início</div>
+      <div class="nav2-tab active"><div class="n2-ico">📖</div>Estudo</div>
+      <div class="nav2-tab nav2-center"><div class="n2-ico">✝</div></div>
+      <div class="nav2-tab"><div class="n2-ico">🎵</div>Culto</div>
+      <div class="nav2-tab"><div class="n2-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 8. CULTO ======== -->
+<div class="screen-section" id="culto2">
+  <div class="screen-label">8. Apoio ao Culto</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header-v2">
+      <div class="header-v2-top">
+        <div class="header-v2-left">
+          <div style="font-size:1.1rem">←</div>
+          <div class="header-v2-title"><h2>Apoio ao Culto</h2></div>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="rel">
+        <span class="badge-new" title="Novo: hero com ações rápidas">[NEW] CultoHeroV2</span>
+        <div class="module-hero" style="flex-direction:column;text-align:center;gap:8px;padding:24px">
+          <div class="mh-icon">🎵</div>
+          <h3>Apoio ao Culto</h3>
+          <p style="font-size:0.65rem;color:#aaa">Tudo que você precisa para o culto</p>
+          <div style="display:flex;gap:8px;margin-top:8px;width:100%">
+            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px;font-size:0.65rem;text-align:center">🎵 Harpa</div>
+            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px;font-size:0.65rem;text-align:center">📋 Cerimonial</div>
+            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px;font-size:0.65rem;text-align:center">📖 Bíblia</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-lbl">Ferramentas do Culto</div>
+      <div class="mod-card">
+        <div class="mc-icon">🎵</div>
+        <div class="mc-text"><h5>Harpa Cristã</h5><p>Hinos com letra e áudio</p></div>
+        <div class="mc-arrow">→</div>
+      </div>
+      <div class="mod-card">
+        <div class="mc-icon">📋</div>
+        <div class="mc-text"><h5>Cerimonial Bíblico</h5><p>Santa Ceia, Batismo e mais</p></div>
+        <div class="mc-arrow">→</div>
+      </div>
+      <div class="mod-card">
+        <div class="mc-icon">📖</div>
+        <div class="mc-text"><h5>Bíblia em Áudio</h5><p>Leitura bíblica para o culto</p></div>
+        <div class="mc-arrow">→</div>
+      </div>
+    </div>
+    <div class="bottom-nav-v2">
+      <div class="nav2-tab"><div class="n2-ico">🏠</div>Início</div>
+      <div class="nav2-tab"><div class="n2-ico">📖</div>Estudo</div>
+      <div class="nav2-tab nav2-center"><div class="n2-ico">✝</div></div>
+      <div class="nav2-tab active"><div class="n2-ico">🎵</div>Culto</div>
+      <div class="nav2-tab"><div class="n2-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 9. PERFIL ======== -->
+<div class="screen-section" id="perfil2">
+  <div class="screen-label">9. Perfil</div>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="header-v2">
+      <div class="header-v2-top">
+        <div class="header-v2-left">
+          <div class="header-v2-title"><h2>Minha Conta</h2></div>
+        </div>
+        <div class="header-v2-icons"><div class="hv2-btn">⚙</div></div>
+      </div>
+    </div>
+    <div class="content">
+      <!-- Profile header horizontal -->
+      <div class="rel">
+        <span class="badge-new" title="Novo: perfil horizontal">[NEW] ProfileHeaderV2</span>
+        <div class="profile-v2-head">
+          <div class="profile-v2-avatar">PJ</div>
+          <div class="profile-v2-info">
+            <h3>Pastor João Silva</h3>
+            <div class="role">Pastor Titular</div>
+            <div class="church">Igreja Evangélica Vida Nova</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-lbl">Configuração da Igreja</div>
+      <div class="config-card">
+        <div class="config-field"><label>Nome da Igreja</label><input placeholder="Ex: Igreja Vida Nova"></div>
+        <div class="config-field"><label>Nome do Pastor</label><input placeholder="Ex: Pastor João"></div>
+        <div style="width:100%;padding:10px;background:#333;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:0.8rem;font-weight:bold;text-align:center;margin-top:8px">✅ Salvar</div>
+      </div>
+      <div class="section-lbl">Minha Conta</div>
+      <div class="menu-item"><div class="mi-icon">👤</div><div class="mi-text"><h5>Dados Pessoais</h5><p>Nome, telefone, e-mail</p></div><div class="mi-arrow">→</div></div>
+      <div class="menu-item"><div class="mi-icon">⭐</div><div class="mi-text"><h5>Meus Favoritos</h5><p>Hinos e versículos salvos</p></div><div class="mi-arrow">→</div></div>
+      <div class="menu-item"><div class="mi-icon">📊</div><div class="mi-text"><h5>Minha Atividade</h5><p>Histórico e estatísticas</p></div><div class="mi-arrow">→</div></div>
+      <div class="premium-box">
+        <div class="pbadge">Em breve</div>
+        <h4>Plano Premium</h4>
+        <p>Backup na nuvem, relatórios avançados e muito mais.</p>
+      </div>
+      <div class="logout-btn">🚪 Sair da Conta</div>
+    </div>
+    <div class="bottom-nav-v2">
+      <div class="nav2-tab"><div class="n2-ico">🏠</div>Início</div>
+      <div class="nav2-tab"><div class="n2-ico">📖</div>Estudo</div>
+      <div class="nav2-tab nav2-center"><div class="n2-ico">✝</div></div>
+      <div class="nav2-tab"><div class="n2-ico">🎵</div>Culto</div>
+      <div class="nav2-tab active"><div class="n2-ico">👤</div>Perfil</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

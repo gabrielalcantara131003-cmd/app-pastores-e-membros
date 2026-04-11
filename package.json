@@ -1,0 +1,17 @@
+{
+  "name": "app-ministerial-server",
+  "version": "1.0.0",
+  "description": "Servidor backend para integração com Mercado Pago",
+  "scripts": {
+    "local": "node api/index.js",
+    "dev": "node --watch api/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "mercadopago": "^2.0.11"
+  }
+}

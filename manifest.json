@@ -1,0 +1,68 @@
+{
+  "name": "Pastores E Membros",
+  "short_name": "Pastores E Membros",
+  "id": "/?id=pastores-e-membros",
+  "description": "Plataforma completa para gestão de igrejas, estudos bíblicos, Harpa Cristã e escola dominical.",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#0a0c10",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "categories": [
+    "lifestyle",
+    "education",
+    "social"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/screenshots/inicio.png",
+      "sizes": "473x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Painel de Controle"
+    },
+    {
+      "src": "/screenshots/perfil.png",
+      "sizes": "473x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Perfil do Usuário"
+    },
+    {
+      "src": "/screenshots/premium.png",
+      "sizes": "473x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Recursos Premium"
+    }
+  ],
+  "iarc_rating_id": ""
+}
+
