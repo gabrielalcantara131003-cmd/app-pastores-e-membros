@@ -35,12 +35,19 @@ jobs:
               print('❌ ERRO: O segredo ANDROID_KEYSTORE_BASE64 está vazio ou não foi encontrado nas configurações do GitHub!')
               sys.exit(1)
           try:
-              # Remove espaços e quebras de linha e decodifica
-              clean_data = ''.join(data.split())
-              decoded = base64.b64decode(clean_data, validate=True)
+              # Filtra APENAS caracteres válidos do alfabeto Base64 (A-Z, a-z, 0-9, +, /, =)
+              valid_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+              clean_data = ''.join(c for c in data if c in valid_chars)
+              
+              # Decodifica (Python adiciona padding automaticamente se necessário)
+              missing_padding = len(clean_data) % 4
+              if missing_padding:
+                  clean_data += '=' * (4 - missing_padding)
+                  
+              decoded = base64.b64decode(clean_data)
               with open('android.keystore', 'wb') as f:
                   f.write(decoded)
-              print('✅ Keystore criada com sucesso via Python!')
+              print(f'✅ Keystore criada com sucesso! (Tamanho filtrado: {len(clean_data)} caracteres)')
           except Exception as e:
               print(f'❌ ERRO de Decodificação: {e}')
               print('Verifique se o segredo no GitHub é um Base64 válido.')
