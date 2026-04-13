@@ -74,7 +74,7 @@ jobs:
 
       - name: Build PAGO Version
         run: |
-          yes | bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "${{ secrets.ANDROID_KEY_PASSWORD }}" --keyStorePassword "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --skip-directory-check
+          yes | bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "igreja1234" --keyStorePassword "igreja1234" --skip-directory-check
           for f in *.apk; do mv "$f" "Pastores-PAGO.apk"; break; done
           for f in *.aab; do mv "$f" "Pastores-PAGO.aab"; break; done
 
@@ -84,7 +84,7 @@ jobs:
 
       - name: Build CORTESIA Version
         run: |
-          yes | bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "${{ secrets.ANDROID_KEY_PASSWORD }}" --keyStorePassword "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --skip-directory-check
+          yes | bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "igreja1234" --keyStorePassword "igreja1234" --skip-directory-check
           for f in *.apk; do mv "$f" "Pastores-CORTESIA.apk"; break; done
           for f in *.aab; do mv "$f" "Pastores-CORTESIA.aab"; break; done
 
