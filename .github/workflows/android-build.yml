@@ -28,7 +28,7 @@ jobs:
 
       - name: Create Keystore file
         run: |
-          printf "%s" "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d -i > android.keystore
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | tr -cd 'A-Za-z0-9+/=' | base64 -d > android.keystore
 
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
