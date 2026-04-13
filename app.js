@@ -1,4 +1,4 @@
-// APP.JS v2.1 — Lógica Consolidada (MVP Premium)
+// APP.JS v2.2 — Lógica Consolidada (MVP Premium)
 // =====================================================
 
 // === CONFIGURAÇÃO DE VERSÃO ===
