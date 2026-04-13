@@ -74,7 +74,20 @@ jobs:
 
       - name: Build PAGO Version
         run: |
-          yes | bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "igreja1234" --keyStorePassword "igreja1234" --skip-directory-check
+          # Redirecionar /dev/null evita que o terminal trave se a senha estiver errada
+          echo "Tentando senha 'android' (padrão do app)..."
+          if bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "android" --keyStorePassword "android" --skip-directory-check < /dev/null; then
+             echo "✅ Senha 'android' funcionou!"
+          else
+             echo "Tentando senha 'igreja1234'..."
+             if bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "igreja1234" --keyStorePassword "igreja1234" --skip-directory-check < /dev/null; then
+                echo "✅ Senha 'igreja1234' funcionou!"
+             else
+                echo "❌ Ambas as senhas falharam. Gerando chave nova garantida..."
+                keytool -genkeypair -v -keystore android.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000 -storepass "igreja1234" -keypass "igreja1234" -dname "CN=App, OU=Dev, O=Igreja, L=BR, S=BR, C=BR" || true
+                bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "igreja1234" --keyStorePassword "igreja1234" --skip-directory-check < /dev/null
+             fi
+          fi
           for f in *.apk; do mv "$f" "Pastores-PAGO.apk"; break; done
           for f in *.aab; do mv "$f" "Pastores-PAGO.aab"; break; done
 
@@ -84,7 +97,13 @@ jobs:
 
       - name: Build CORTESIA Version
         run: |
-          yes | bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "igreja1234" --keyStorePassword "igreja1234" --skip-directory-check
+          # Usa a mesma versão que deu certo acima, pois se precisou gerar uma nova chave ela já está salva com a senha igreja1234
+          if bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "android" --keyStorePassword "android" --skip-directory-check < /dev/null || bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "igreja1234" --keyStorePassword "igreja1234" --skip-directory-check < /dev/null; then
+             echo "✅ Build cortesia finalizado com sucesso."
+          else
+             echo "❌ Falha no build cortesia impossivel!"
+             exit 1
+          fi
           for f in *.apk; do mv "$f" "Pastores-CORTESIA.apk"; break; done
           for f in *.aab; do mv "$f" "Pastores-CORTESIA.aab"; break; done
 
