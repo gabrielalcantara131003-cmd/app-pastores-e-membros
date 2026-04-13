@@ -2,6 +2,9 @@
 // APP.JS v2 — Lógica Consolidada (MVP Premium)
 // =====================================================
 
+// === CONFIGURAÇÃO DE VERSÃO ===
+const IS_FREE_VERSION = false; // Mude para true para liberar todos os recursos (Versão de Cortesia)
+
 // === STATE ===
 let currentScreen = 'inicio';
 let screenHistory = [];
@@ -371,12 +374,56 @@ function closeOnboarding() {
 
 // === PREMIUM/FREEMIUM LOGIC ===
 function getUserPlan() {
+  if (IS_FREE_VERSION) return 'pastor_vitalicio';
   if (!currentUser) return 'free';
-  return localStorage.getItem(getUserStorageKey('plan')) || 'free';
+  const plan = localStorage.getItem(getUserStorageKey('plan')) || 'free';
+  
+  if (plan !== 'free') {
+    const expiresAt = localStorage.getItem(getUserStorageKey('plan_expires'));
+    if (expiresAt && expiresAt !== '-1') {
+      const expirationTime = parseInt(expiresAt, 10);
+      if (Date.now() > expirationTime) {
+        // Expirou!
+        setUserPlan('free');
+        showToast('Sua assinatura expirou. Renove para continuar usando os recursos Premium.', 'warning');
+        return 'free';
+      }
+    }
+  }
+  return plan;
 }
 
 function setUserPlan(plan) {
   localStorage.setItem(getUserStorageKey('plan'), plan);
+  
+  if (plan !== 'free') {
+    const parts = plan.split('_');
+    const duration = parts[parts.length - 1]; // mensal, anual, teste, vitalicio
+    
+    let expiresAt = null;
+    const now = new Date();
+    
+    if (duration === 'mensal') {
+      now.setMonth(now.getMonth() + 1);
+      expiresAt = now.getTime();
+    } else if (duration === 'anual') {
+      now.setFullYear(now.getFullYear() + 1);
+      expiresAt = now.getTime();
+    } else if (duration === 'teste') {
+      // Plano de teste dura até o fim do dia (para validações rápidas)
+      // Ajuste para 1 dia para testes adequados
+      now.setDate(now.getDate() + 1);
+      expiresAt = now.getTime();
+    } else if (duration === 'vitalicio') {
+      expiresAt = -1; // -1 significa que não expira
+    }
+    
+    if (expiresAt !== null) {
+      localStorage.setItem(getUserStorageKey('plan_expires'), expiresAt);
+    }
+  } else {
+    localStorage.removeItem(getUserStorageKey('plan_expires'));
+  }
 }
 
 function ativarPremiumDesenvolvedor() {
@@ -413,6 +460,7 @@ function updateIAUsageBar() {
 
 // === PREMIUM GATEKEEPER ===
 function isPremium() {
+  if (IS_FREE_VERSION) return true;
   const plan = getUserPlan();
   return plan !== 'free';
 }
@@ -454,6 +502,7 @@ function renderPremiumPlans() {
 }
 
 function openPremiumModal(featureName = '') {
+  if (IS_FREE_VERSION) return;
   const modal = document.getElementById('modalPremium');
   if (modal) {
     modal.classList.add('active');
@@ -532,7 +581,9 @@ function checkRetornoPagamento() {
   if (status === 'approved') {
     const currentPlan = getUserPlan();
     if (currentPlan === 'free') {
-       setUserPlan('pastor_mensal');
+       const pendingPlan = localStorage.getItem('pending_plan') || 'pastor_mensal';
+       setUserPlan(pendingPlan);
+       localStorage.removeItem('pending_plan');
        showToast('🎉 Pagamento Aprovado! Seu acesso Premium foi liberado.', 'success');
        updatePremiumUI();
        window.history.replaceState({}, document.title, window.location.pathname);
@@ -542,6 +593,9 @@ function checkRetornoPagamento() {
 
 async function createMPPreference(profile, duration, price) {
   showToast('Iniciando pagamento seguro...', '');
+  
+  // Salva o plano que o usuário está tentando assinar
+  localStorage.setItem('pending_plan', `${profile}_${duration}`);
 
   const checkOutData = {
     items: [{
@@ -549,7 +603,9 @@ async function createMPPreference(profile, duration, price) {
       quantity: 1,
       unit_price: price,
       currency_id: 'BRL'
-    }]
+    }],
+    payerEmail: currentUser ? currentUser.email : '',
+    origin: window.location.origin
   };
 
   try {
@@ -569,7 +625,7 @@ async function createMPPreference(profile, duration, price) {
     }
   } catch (err) {
     console.error('Erro no checkout:', err);
-    showToast('Erro ao conectar com o servidor de pagamentos. Verifique se o server.js está rodando.', 'danger');
+    showToast('Erro ao conectar com o servidor de pagamentos.', 'danger');
   }
 }
 
@@ -607,24 +663,56 @@ function togglePremiumPlan() {
   updatePremiumUI();
 }
 
+function forceSyncPayment() {
+  const pending = localStorage.getItem('pending_plan');
+  if (pending) {
+    setUserPlan(pending);
+    localStorage.removeItem('pending_plan');
+    showToast('✅ Pagamento sincronizado e plano liberado!', 'success');
+    updatePremiumUI();
+  } else {
+    showToast('Nenhum pagamento pendente foi encontrado.', 'danger');
+  }
+}
+
 function updatePremiumUI() {
-  const plan = getUserPlan();
   const badge = document.getElementById('profilePlanBadge');
   const title = document.getElementById('profilePlanTitle');
   const text = document.getElementById('profilePlanText');
   const btn = document.getElementById('profilePlanBtn');
+
+  if (IS_FREE_VERSION) {
+    if (badge) {
+      badge.textContent = `🎁 Versão de Cortesia`;
+      badge.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      badge.style.color = '#fff';
+    }
+    if (title) title.textContent = `Acesso Total Liberado`;
+    if (text) text.textContent = 'Você está usando uma versão especial com todos os recursos premium habilitados.';
+    if (btn) btn.style.display = 'none';
+    return;
+  }
+
+  const plan = getUserPlan();
   
   if (plan !== 'free') {
     const [profile, duration] = plan.split('_');
     const config = PLANS_CONFIG[profile];
-    const durationLabel = duration === 'mensal' ? 'Mensal' : (duration === 'anual' ? 'Anual' : 'Vitalício');
+    const durationLabel = duration === 'mensal' ? 'Mensal' : (duration === 'anual' ? 'Anual' : (duration === 'teste' ? 'Teste' : 'Vitalício'));
+    
+    const expiresAt = localStorage.getItem(getUserStorageKey('plan_expires'));
+    let expiresText = '';
+    if (expiresAt && expiresAt !== '-1') {
+       const d = new Date(parseInt(expiresAt, 10));
+       expiresText = ` (Válido até ${d.toLocaleDateString('pt-BR')})`;
+    }
     
     if (badge) {
       badge.textContent = `⭐ ${config.name}`;
       badge.style.background = 'linear-gradient(135deg, var(--gold-dark), var(--gold))';
       badge.style.color = '#fff';
     }
-    if (title) title.textContent = `Assinatura ${durationLabel} Ativa`;
+    if (title) title.textContent = `Assinatura ${durationLabel} Ativa${expiresText}`;
     if (text) text.textContent = 'Você tem acesso ilimitado a todos os recursos do App Ministerial.';
     if (btn) btn.innerHTML = '<i data-lucide="settings"></i> Gerenciar Plano';
   } else {

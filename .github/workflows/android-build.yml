@@ -32,16 +32,32 @@ jobs:
         run: |
           echo "$KEYSTORE_BASE64" | tr -d '\n\r\t ' | base64 -d -i > android.keystore
 
-      - name: Build AAB using Bubblewrap
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Build PAGO Version
         run: |
-          npm install -g @bubblewrap/cli
           bubblewrap doctor --jdkPath "$JAVA_HOME" --androidSdkPath "$ANDROID_HOME"
           bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "${{ secrets.ANDROID_KEY_PASSWORD }}" --keyStorePassword "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --skip-directory-check
+          for f in *.apk; do mv "$f" "Pastores-PAGO.apk"; break; done
+          for f in *.aab; do mv "$f" "Pastores-PAGO.aab"; break; done
+
+      - name: Switch to CORTESIA Mode
+        run: |
+          sed -i 's/const IS_FREE_VERSION = false/const IS_FREE_VERSION = true/g' app.js
+
+      - name: Build CORTESIA Version
+        run: |
+          bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "${{ secrets.ANDROID_KEY_PASSWORD }}" --keyStorePassword "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --skip-directory-check
+          for f in *.apk; do mv "$f" "Pastores-CORTESIA.apk"; break; done
+          for f in *.aab; do mv "$f" "Pastores-CORTESIA.aab"; break; done
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: android-release-package
+          name: Versoes-Android-Pastores
           path: |
-            *.aab
-            *.apk
+            Pastores-PAGO.apk
+            Pastores-PAGO.aab
+            Pastores-CORTESIA.apk
+            Pastores-CORTESIA.aab

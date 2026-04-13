@@ -18,12 +18,22 @@ const client = new MercadoPagoConfig({
 // Aceita qualquer POST (independente de como a Vercel reescreve a URL internamente)
 app.post('*', async (req, res) => {
   try {
-    const { items } = req.body;
+    const { items, payerEmail, origin } = req.body;
+    const baseOrigin = origin || `http://${req.headers.host}`;
     
     const preference = new Preference(client);
     const result = await preference.create({
       body: {
         items: items,
+        payer: {
+          email: payerEmail || 'test_user_123@testuser.com'
+        },
+        back_urls: {
+          success: baseOrigin,
+          failure: baseOrigin,
+          pending: baseOrigin
+        },
+        auto_return: 'approved'
       }
     });
 

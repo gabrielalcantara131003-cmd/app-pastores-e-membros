@@ -23,17 +23,30 @@ module.exports = async (req, res) => {
     try {
       const body = req.body || {};
       const items = body.items || [];
+      const payerEmail = body.payerEmail;
+      const origin = body.origin || 'https://app-pastores-e-membros.vercel.app'; // Fallback se não vier
       
       const preference = new Preference(client);
       const result = await preference.create({
-        body: { items }
+        body: { 
+          items,
+          payer: {
+            email: payerEmail || 'test_user_123@testuser.com' // MP exige um e-mail válido
+          },
+          back_urls: {
+            success: origin,
+            failure: origin,
+            pending: origin
+          },
+          auto_return: 'approved'
+        }
       });
 
-      console.log(`[MP] Preferência Vercel Nativa Criada! ID: ${result.id}`);
+      console.log(`[MP] Preferência Criada! ID: ${result.id}`);
       return res.status(200).json({ init_point: result.init_point });
       
     } catch (error) {
-      console.error('Erro na Vercel Serverless:', error.message || error);
+      console.error('Erro no Mercado Pago:', error.message || error);
       return res.status(500).json({ error: 'Erro interno ao processar pagamento.' });
     }
   }
