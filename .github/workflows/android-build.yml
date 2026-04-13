@@ -28,7 +28,26 @@ jobs:
 
       - name: Create Keystore file
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | tr -cd 'A-Za-z0-9+/=' | base64 -d > android.keystore
+          python3 -c "
+          import base64, os, sys
+          data = os.environ.get('KEYSTORE_DATA')
+          if not data:
+              print('❌ ERRO: O segredo ANDROID_KEYSTORE_BASE64 está vazio ou não foi encontrado nas configurações do GitHub!')
+              sys.exit(1)
+          try:
+              # Remove espaços e quebras de linha e decodifica
+              clean_data = ''.join(data.split())
+              decoded = base64.b64decode(clean_data, validate=True)
+              with open('android.keystore', 'wb') as f:
+                  f.write(decoded)
+              print('✅ Keystore criada com sucesso via Python!')
+          except Exception as e:
+              print(f'❌ ERRO de Decodificação: {e}')
+              print('Verifique se o segredo no GitHub é um Base64 válido.')
+              sys.exit(1)
+          "
+        env:
+          KEYSTORE_DATA: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
 
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
