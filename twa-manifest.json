@@ -17,7 +17,7 @@
   "maskableIconUrl": "https://app-igreja-red.vercel.app/icon-512.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
-    "path": "C:\\Users\\gabriel\\Downloads\\APP IGREJA\\android.keystore",
+    "path": "android.keystore",
     "alias": "android"
   },
   "appVersionName": "3",
