@@ -64,7 +64,7 @@ jobs:
 
       - name: Build PAGO Version
         run: |
-          bubblewrap doctor --jdkPath "$JAVA_HOME" --androidSdkPath "$ANDROID_HOME"
+          printf "No\nNo\n" | bubblewrap doctor --jdkPath "$JAVA_HOME" --androidSdkPath "$ANDROID_HOME" || true
           yes "" | bubblewrap build --signingKeyPath android.keystore --signingKeyAlias "android" --signingKeyPassword "${{ secrets.ANDROID_KEY_PASSWORD }}" --keyStorePassword "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --skip-directory-check
           for f in *.apk; do mv "$f" "Pastores-PAGO.apk"; break; done
           for f in *.aab; do mv "$f" "Pastores-PAGO.aab"; break; done
