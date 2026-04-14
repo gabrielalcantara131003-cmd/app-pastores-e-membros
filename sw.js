@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ministerial-v10';
+const CACHE_NAME = 'ministerial-v12';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -35,31 +35,34 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
+  const url = new URL(event.request.url);
+  const isCoreFile = ['/', '/index.html', '/app.js', '/styles.css'].some(path => url.pathname === path || (path === '/' && url.pathname === ''));
+
+  if (isCoreFile) {
+    // Estratégia: Network First para arquivos principais
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
           return response;
-        }
-
-        const fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest).then(
-          (response) => {
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
+        })
+        .catch(() => caches.match(event.request))
+    );
+  } else {
+    // Estratégia: Cache First para o restante
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return response || fetch(event.request).then((fetchRes) => {
+          const responseToCache = fetchRes.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+          return fetchRes;
+        });
       })
-  );
+    );
+  }
 });

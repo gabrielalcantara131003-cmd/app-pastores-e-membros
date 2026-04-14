@@ -2,6 +2,7 @@
 // =====================================================
 
 // === CONFIGURAÇÃO DE VERSÃO ===
+const APP_VERSION = '1.2.1';
 // Detecção automática: se a URL contém ?version=cortesia, libera acesso total
 // NÃO salva no localStorage para evitar contaminar versão PAGO
 const IS_FREE_VERSION = new URLSearchParams(window.location.search).get('version') === 'cortesia';
@@ -223,39 +224,47 @@ function showAuthScreen() {
 
 // Entrar no app
 function enterApp() {
-  const authScreen = document.getElementById('authScreen');
-  const app = document.getElementById('app');
-  authScreen.classList.add('hidden');
-  app.style.display = 'block';
-  
-  // Applica nível de permissão no corpo do site
-  if (currentUser.perfilAcesso === 'membro') {
-    document.body.classList.add('role-membro');
-  } else {
-    document.body.classList.remove('role-membro');
+  try {
+    const authScreen = document.getElementById('authScreen');
+    const app = document.getElementById('app');
+    authScreen.classList.add('hidden');
+    app.style.display = 'block';
+    
+    // Applica nível de permissão no corpo do site
+    if (currentUser.perfilAcesso === 'membro') {
+      document.body.classList.add('role-membro');
+    } else {
+      document.body.classList.remove('role-membro');
+    }
+    
+    // Carregar dados do usuário
+    updateUIWithUserData();
+    loadUserScopedData();
+    
+    // Init do app
+    loadVerseDoDia();
+    
+    // Módulos com proteção individual
+    try { loadStats(); } catch(e) { console.error("Erro ao carregar estatísticas:", e); }
+    try { renderMembros(); } catch(e) { console.error("Erro ao renderizar membros:", e); }
+    try { renderSermoes(); } catch(e) { console.error("Erro ao renderizar sermões:", e); }
+    try { renderCerimonial(); } catch(e) { console.error("Erro ao renderizar cerimonial:", e); }
+    try { renderDicionario(); } catch(e) { console.error("Erro ao renderizar dicionário:", e); }
+    
+    initEBD();
+    initMagicoData();
+    initBgMusic();
+    updateIAUsageBar();
+    updatePremiumUI();
+    loadFinancasFromStorage();
+    renderFinancas();
+    loadCarteirinha(); // Carrega a foto da carteira se existir
+    initRealMP(); // Inicializa o Mercado Pago Real
+    checkRetornoPagamento(); // Verifica se usuário voltou de um pagamento
+  } catch (globalError) {
+    console.error("ERRO CRÍTICO NA INICIALIZAÇÃO:", globalError);
+    showToast("Ocorreu um erro ao carregar o app. Tente recarregar a página.", "danger");
   }
-  
-  // Carregar dados do usuário
-  updateUIWithUserData();
-  loadUserScopedData();
-  
-  // Init do app
-  loadVerseDoDia();
-  loadStats();
-  renderMembros();
-  renderSermoes();
-  renderCerimonial();
-  renderDicionario();
-  initEBD();
-  initMagicoData();
-  initBgMusic();
-  updateIAUsageBar();
-  updatePremiumUI();
-  loadFinancasFromStorage();
-  renderFinancas();
-  loadCarteirinha(); // Carrega a foto da carteira se existir
-  initRealMP(); // Inicializa o Mercado Pago Real
-  checkRetornoPagamento(); // Verifica se usuário voltou de um pagamento
 }
 
 // Tabs de login/cadastro
@@ -726,6 +735,10 @@ function updatePremiumUI() {
     if (text) text.textContent = 'Sermões ilimitados, exportação PDF, backup na nuvem e relatórios avançados.';
     if (btn) btn.innerHTML = '<i data-lucide="crown"></i> Ver Plano Premium';
   }
+
+  // Adicionar versão no final da tela de perfil
+  const versionEl = document.getElementById('appVersionIndicator');
+  if (versionEl) versionEl.textContent = `Versão ${APP_VERSION}`;
 }
 
 // === DURATION SELECTOR ===
