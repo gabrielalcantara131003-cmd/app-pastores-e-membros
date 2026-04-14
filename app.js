@@ -2,10 +2,15 @@
 // =====================================================
 
 // === CONFIGURAÇÃO DE VERSÃO ===
-const APP_VERSION = '1.2.1';
+const APP_VERSION = '1.2.2';
 // Detecção automática: se a URL contém ?version=cortesia, libera acesso total
-// NÃO salva no localStorage para evitar contaminar versão PAGO
 const IS_FREE_VERSION = new URLSearchParams(window.location.search).get('version') === 'cortesia';
+
+// Limpeza de Legado: Remove a persistência antiga que "viciava" o app como cortesia
+if (localStorage.getItem('appMinisterial_cortesia')) {
+  localStorage.removeItem('appMinisterial_cortesia');
+  console.log('🧹 Limpeza de legado realizada: Removido flag de cortesia persistente');
+}
 
 // === STATE ===
 let currentScreen = 'inicio';
@@ -736,9 +741,12 @@ function updatePremiumUI() {
     if (btn) btn.innerHTML = '<i data-lucide="crown"></i> Ver Plano Premium';
   }
 
-  // Adicionar versão no final da tela de perfil
+  // Adicionar versão no final da tela de perfil com indicador de tipo
   const versionEl = document.getElementById('appVersionIndicator');
-  if (versionEl) versionEl.textContent = `Versão ${APP_VERSION}`;
+  if (versionEl) {
+    const versionLabel = IS_FREE_VERSION ? '[CORTESIA]' : '[PAGO]';
+    versionEl.textContent = `Versão ${APP_VERSION} ${versionLabel}`;
+  }
 }
 
 // === DURATION SELECTOR ===
