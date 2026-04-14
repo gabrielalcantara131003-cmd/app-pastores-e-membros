@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ministerial-v14';
+const CACHE_NAME = 'ministerial-v15';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -19,17 +19,21 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            // Deleção agressiva de qualquer cache que não seja o v15
+            if (cacheName !== CACHE_NAME) {
+              console.log('🗑️ Apagando cache antigo no SW:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+    ])
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {

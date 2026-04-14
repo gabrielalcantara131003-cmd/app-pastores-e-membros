@@ -2,14 +2,20 @@
 // =====================================================
 
 // === CONFIGURAÇÃO DE VERSÃO ===
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.3.1';
 // Detecção automática: se a URL contém ?version=cortesia, libera acesso total
 const IS_FREE_VERSION = new URLSearchParams(window.location.search).get('version') === 'cortesia';
 
-// Limpeza de Legado e Proteção de Cache
-(function nukeLegacy() {
-  const legacyKeys = ['appMinisterial_cortesia', 'isPremium', 'userPlan'];
-  legacyKeys.forEach(k => localStorage.removeItem(k));
+// PURGA TOTAL DE CACHE LEGADO (Nuke)
+(function nukeEverything() {
+  const currentV = localStorage.getItem('appMinisterial_installed_v');
+  if (currentV !== APP_VERSION) {
+    console.log('☢️ Versão nova detectada: Limpando todos os dados de cache antigo...');
+    // Limpamos itens que podem viciar a versão, mas mantemos os dados do usuário (membros/finanças)
+    const dangerousKeys = ['appMinisterial_cortesia', 'isPremium', 'userPlan', 'appMinisterial_session_v'];
+    dangerousKeys.forEach(k => localStorage.removeItem(k));
+    localStorage.setItem('appMinisterial_installed_v', APP_VERSION);
+  }
 })();
 
 // === STATE ===
@@ -696,15 +702,19 @@ function updatePremiumUI() {
   const text = document.getElementById('profilePlanText');
   const btn = document.getElementById('profilePlanBtn');
 
-  // DNA VISUAL: Diferenciação drástica entre PAGO e CORTESIA
+  // DNA VISUAL 2.0: Cores Sinaleiras (Vermelho para PAGO, Verde para CORTESIA)
   if (IS_FREE_VERSION) {
-    document.documentElement.style.setProperty('--brand-primary', '#f59e0b'); // Dourado
-    document.documentElement.style.setProperty('--brand-secondary', '#d97706');
+    // TEMA VERDE (Livre)
+    document.documentElement.style.setProperty('--brand-primary', '#22c55e'); 
+    document.documentElement.style.setProperty('--brand-secondary', '#16a34a');
     document.body.classList.add('is-cortesia');
+    console.log('🟢 MODO CORTESIA ATIVADO (Sinal Verde)');
   } else {
-    document.documentElement.style.setProperty('--brand-primary', '#3b82f6'); // Azul Padrão
-    document.documentElement.style.setProperty('--brand-secondary', '#2563eb');
+    // TEMA VERMELHO (Pago/Bloqueado)
+    document.documentElement.style.setProperty('--brand-primary', '#ef4444'); 
+    document.documentElement.style.setProperty('--brand-secondary', '#dc2626');
     document.body.classList.remove('is-cortesia');
+    console.log('🔴 MODO PAGO ATIVADO (Sinal Vermelho)');
   }
 
   if (IS_FREE_VERSION) {
