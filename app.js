@@ -1584,7 +1584,7 @@ function loadStats() {
   const ativosCount = membrosData.filter(m => m.status === 'ativo').length;
   animateNumber('statMembros', ativosCount);
   animateNumber('statSermoes', sermoesData.length);
-  animateNumber('statLicoes', (typeof ebdData !== 'undefined' && ebdData.alunos) ? ebdData.alunos.length : 0);
+  animateNumber('statLicoes', (typeof ebdData !== 'undefined' && ebdData && ebdData.alunos) ? ebdData.alunos.length : 0);
 }
 
 function animateNumber(elId, target) {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ministerial-v9';
+const CACHE_NAME = 'ministerial-v10';
 const urlsToCache = [
   '/',
   '/index.html',
