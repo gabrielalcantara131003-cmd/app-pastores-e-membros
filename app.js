@@ -3,17 +3,8 @@
 
 // === CONFIGURAÇÃO DE VERSÃO ===
 // Detecção automática: se a URL contém ?version=cortesia, libera acesso total
-// Também salva no localStorage para funcionar offline depois
-const IS_FREE_VERSION = (function() {
-  const params = new URLSearchParams(window.location.search);
-  const urlFlag = params.get('version') === 'cortesia';
-  if (urlFlag) {
-    localStorage.setItem('appMinisterial_cortesia', 'true');
-    return true;
-  }
-  // Verificar se já foi marcado como cortesia em acesso anterior
-  return localStorage.getItem('appMinisterial_cortesia') === 'true';
-})();
+// NÃO salva no localStorage para evitar contaminar versão PAGO
+const IS_FREE_VERSION = new URLSearchParams(window.location.search).get('version') === 'cortesia';
 
 // === STATE ===
 let currentScreen = 'inicio';
