@@ -93,7 +93,11 @@ jobs:
 
       - name: Switch to CORTESIA Mode
         run: |
-          sed -i 's/const IS_FREE_VERSION = false/const IS_FREE_VERSION = true/g' app.js
+          sed -i 's/const IS_FREE_VERSION = (function()/\/\/ CORTESIA: forçar true\nconst IS_FREE_VERSION = true; \/\/ (function()/g' app.js || true
+          # Alterar startUrl no twa-manifest.json para incluir ?version=cortesia
+          sed -i 's|"startUrl": "/?source=pwa"|"startUrl": "/?source=pwa\&version=cortesia"|g' twa-manifest.json
+          echo "✅ Modo cortesia ativado — startUrl atualizado com ?version=cortesia"
+          cat twa-manifest.json | grep startUrl
 
       - name: Build CORTESIA Version
         run: |

@@ -1,8 +1,19 @@
-// APP.JS v2.2 — Lógica Consolidada (MVP Premium)
+// APP.JS v2.3 — Lógica Consolidada (MVP Premium)
 // =====================================================
 
 // === CONFIGURAÇÃO DE VERSÃO ===
-const IS_FREE_VERSION = false; // Mude para true para liberar todos os recursos (Versão de Cortesia)
+// Detecção automática: se a URL contém ?version=cortesia, libera acesso total
+// Também salva no localStorage para funcionar offline depois
+const IS_FREE_VERSION = (function() {
+  const params = new URLSearchParams(window.location.search);
+  const urlFlag = params.get('version') === 'cortesia';
+  if (urlFlag) {
+    localStorage.setItem('appMinisterial_cortesia', 'true');
+    return true;
+  }
+  // Verificar se já foi marcado como cortesia em acesso anterior
+  return localStorage.getItem('appMinisterial_cortesia') === 'true';
+})();
 
 // === STATE ===
 let currentScreen = 'inicio';
@@ -987,6 +998,163 @@ function renderFinancas() {
   }
 }
 
+// === EXPORTAR PDF — TESOURARIA ===
+function exportarFinancasPDF() {
+  if (financasData.length === 0) {
+    showToast('Nenhum lançamento para exportar.', 'danger');
+    return;
+  }
+
+  const igrejaNome = currentUser ? currentUser.igreja : 'Igreja';
+  const dataAtual = new Date().toLocaleDateString('pt-BR');
+  
+  let totalEntradas = 0;
+  let totalSaidas = 0;
+  financasData.forEach(f => {
+    if (f.tipo === 'entrada') totalEntradas += f.valor;
+    else totalSaidas += f.valor;
+  });
+  const saldo = totalEntradas - totalSaidas;
+
+  let rowsHTML = financasData.map(f => {
+    const isEntrada = f.tipo === 'entrada';
+    return `<tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-size:12px;">${f.data.split('-').reverse().join('/')}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-size:12px;">${f.desc}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-size:12px;">${f.categoria}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-size:12px;color:${isEntrada ? '#059669' : '#dc2626'};font-weight:700;">
+        ${isEntrada ? '+' : '-'} R$ ${f.valor.toFixed(2).replace('.', ',')}
+      </td>
+    </tr>`;
+  }).join('');
+
+  const container = document.createElement('div');
+  container.innerHTML = `
+    <div style="font-family:'Inter',sans-serif;padding:20px;color:#1e293b;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <h1 style="font-size:20px;margin:0;color:#0f172a;">Relatório Financeiro</h1>
+        <p style="font-size:13px;color:#64748b;margin:4px 0 0;">${igrejaNome} — Gerado em ${dataAtual}</p>
+      </div>
+      <div style="display:flex;gap:16px;margin-bottom:20px;">
+        <div style="flex:1;background:#f0fdf4;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:11px;color:#059669;font-weight:600;">ENTRADAS</div>
+          <div style="font-size:18px;font-weight:800;color:#059669;">R$ ${totalEntradas.toFixed(2).replace('.', ',')}</div>
+        </div>
+        <div style="flex:1;background:#fef2f2;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:11px;color:#dc2626;font-weight:600;">SAÍDAS</div>
+          <div style="font-size:18px;font-weight:800;color:#dc2626;">R$ ${totalSaidas.toFixed(2).replace('.', ',')}</div>
+        </div>
+        <div style="flex:1;background:#eff6ff;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:11px;color:#2563eb;font-weight:600;">SALDO</div>
+          <div style="font-size:18px;font-weight:800;color:#2563eb;">R$ ${saldo.toFixed(2).replace('.', ',')}</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;">
+        <thead>
+          <tr style="background:#f8fafc;">
+            <th style="padding:10px 12px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">DATA</th>
+            <th style="padding:10px 12px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">DESCRIÇÃO</th>
+            <th style="padding:10px 12px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">CATEGORIA</th>
+            <th style="padding:10px 12px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">VALOR</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHTML}</tbody>
+      </table>
+      <div style="margin-top:20px;text-align:center;font-size:10px;color:#94a3b8;">
+        Documento gerado automaticamente pelo App Ministerial
+      </div>
+    </div>
+  `;
+
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: `Relatorio-Financeiro-${igrejaNome.replace(/\s/g, '_')}-${new Date().toISOString().slice(0,10)}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  showToast('Gerando PDF do relatório...', '');
+  html2pdf().set(opt).from(container).save().then(() => {
+    showToast('✅ PDF gerado com sucesso!', 'success');
+  }).catch(err => {
+    console.error('Erro ao gerar PDF:', err);
+    showToast('Erro ao gerar o PDF.', 'danger');
+  });
+}
+
+// === EXPORTAR PDF — LISTA DE MEMBROS ===
+function exportarMembrosPDF() {
+  if (membrosData.length === 0) {
+    showToast('Nenhum membro cadastrado para exportar.', 'danger');
+    return;
+  }
+
+  const igrejaNome = currentUser ? currentUser.igreja : 'Igreja';
+  const dataAtual = new Date().toLocaleDateString('pt-BR');
+  const ativos = membrosData.filter(m => m.status === 'ativo').length;
+  const inativos = membrosData.filter(m => m.status === 'inativo').length;
+
+  let rowsHTML = membrosData.map((m, i) => {
+    const fmt = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('pt-BR') : '—';
+    return `<tr>
+      <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:11px;">${i + 1}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:11px;font-weight:600;">${m.nome}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:11px;">${m.cargo || '—'}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:11px;">${m.telefone || '—'}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:11px;">${m.congregacao || '—'}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:11px;">
+        <span style="background:${m.status === 'ativo' ? '#dcfce7' : '#fee2e2'};color:${m.status === 'ativo' ? '#166534' : '#991b1b'};padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;">${m.status}</span>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const container = document.createElement('div');
+  container.innerHTML = `
+    <div style="font-family:'Inter',sans-serif;padding:20px;color:#1e293b;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <h1 style="font-size:20px;margin:0;color:#0f172a;">Lista de Membros</h1>
+        <p style="font-size:13px;color:#64748b;margin:4px 0 0;">${igrejaNome} — Gerado em ${dataAtual}</p>
+        <p style="font-size:12px;color:#94a3b8;margin:2px 0 0;">
+          Total: ${membrosData.length} membros · ${ativos} ativos · ${inativos} inativos
+        </p>
+      </div>
+      <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;">
+        <thead>
+          <tr style="background:#f8fafc;">
+            <th style="padding:8px 10px;text-align:left;font-size:10px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">#</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">NOME</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">CARGO</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">TELEFONE</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">CONGREGAÇÃO</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;color:#64748b;font-weight:700;border-bottom:2px solid #e2e8f0;">STATUS</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHTML}</tbody>
+      </table>
+      <div style="margin-top:20px;text-align:center;font-size:10px;color:#94a3b8;">
+        Documento gerado automaticamente pelo App Ministerial
+      </div>
+    </div>
+  `;
+
+  const opt = {
+    margin: [10, 8, 10, 8],
+    filename: `Lista-Membros-${igrejaNome.replace(/\s/g, '_')}-${new Date().toISOString().slice(0,10)}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+  };
+
+  showToast('Gerando PDF da lista de membros...', '');
+  html2pdf().set(opt).from(container).save().then(() => {
+    showToast('✅ PDF gerado com sucesso!', 'success');
+  }).catch(err => {
+    console.error('Erro ao gerar PDF:', err);
+    showToast('Erro ao gerar o PDF.', 'danger');
+  });
+}
+
 // === STORAGE SCOPED POR USUÁRIO ===
 function getUserStorageKey(suffix) {
   if (!currentUser) return 'appMinisterial_' + suffix;
@@ -1037,7 +1205,7 @@ function showToast(message, type = '') {
 
 // === NAVIGATION ===
 const mainNavScreens = ['inicio','membros','estudo','culto','escola','carteirinha','perfil'];
-const subScreens = ['biblia','sermao','cerimonial','dicionario','harpa','membro-detalhe','sermao-detalhe','cerimonial-detalhe','harpa-detalhe','esboco-detalhe'];
+const subScreens = ['biblia','sermao','cerimonial','dicionario','harpa','membro-detalhe','sermao-detalhe','cerimonial-detalhe','harpa-detalhe','esboco-detalhe','tesouraria'];
 
 function navigateTo(screenId) {
   screenHistory = [];
@@ -1073,6 +1241,11 @@ function showScreen(screenId) {
   // Re-render EBD ao navegar para a tela
   if (screenId === 'escola') {
     try { renderEBDCaderneta(); } catch(e) { console.error('EBD render error:', e); }
+  }
+  // Re-render Tesouraria ao navegar para a tela
+  if (screenId === 'tesouraria') {
+    loadFinancasFromStorage();
+    renderFinancas();
   }
 }
 
@@ -1119,7 +1292,8 @@ function updateHeader(screenId) {
     'harpa':'Harpa Cristã','cerimonial':'Cerimonial Bíblico','membro-detalhe':'Ficha do Membro',
     'sermao-detalhe':'Sermão','cerimonial-detalhe':'Cerimonial',
     'harpa-detalhe':'Hino da Harpa',
-    'esboco-detalhe':'Esboço IA'
+    'esboco-detalhe':'Esboço IA',
+    'tesouraria':'Tesouraria da Igreja'
   };
   if (subScreens.includes(screenId)) {
     main.style.display = 'none';

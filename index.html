@@ -265,6 +265,11 @@
         <button class="chip" onclick="filterStatus(this,'ativo')">Ativos</button>
         <button class="chip" onclick="filterStatus(this,'inativo')">Inativos</button>
       </div>
+      <div style="margin-bottom:var(--sp-4)">
+        <button class="btn-secondary" onclick="exportarMembrosPDF()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <i data-lucide="download"></i> Baixar Lista em PDF
+        </button>
+      </div>
       <div id="membrosLista"></div>
     </div>
     <button class="fab" onclick="openAddMembro()" aria-label="Adicionar membro">+</button>
@@ -830,6 +835,12 @@
       <div class="finance-actions">
         <button class="btn-primary" onclick="openAddFinanca('entrada')"><i data-lucide="plus-circle"></i> Entrada</button>
         <button class="btn-secondary" onclick="openAddFinanca('saida')"><i data-lucide="minus-circle"></i> Saída</button>
+      </div>
+
+      <div style="margin-bottom:var(--sp-4)">
+        <button class="btn-secondary" onclick="exportarFinancasPDF()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <i data-lucide="download"></i> Baixar Relatório em PDF
+        </button>
       </div>
 
       <div class="section-label">Movimentações Recentes</div>
