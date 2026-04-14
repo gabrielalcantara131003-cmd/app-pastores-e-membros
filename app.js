@@ -2,15 +2,15 @@
 // =====================================================
 
 // === CONFIGURAÇÃO DE VERSÃO ===
-const APP_VERSION = '1.2.2';
+const APP_VERSION = '1.3.0';
 // Detecção automática: se a URL contém ?version=cortesia, libera acesso total
 const IS_FREE_VERSION = new URLSearchParams(window.location.search).get('version') === 'cortesia';
 
-// Limpeza de Legado: Remove a persistência antiga que "viciava" o app como cortesia
-if (localStorage.getItem('appMinisterial_cortesia')) {
-  localStorage.removeItem('appMinisterial_cortesia');
-  console.log('🧹 Limpeza de legado realizada: Removido flag de cortesia persistente');
-}
+// Limpeza de Legado e Proteção de Cache
+(function nukeLegacy() {
+  const legacyKeys = ['appMinisterial_cortesia', 'isPremium', 'userPlan'];
+  legacyKeys.forEach(k => localStorage.removeItem(k));
+})();
 
 // === STATE ===
 let currentScreen = 'inicio';
@@ -695,6 +695,17 @@ function updatePremiumUI() {
   const title = document.getElementById('profilePlanTitle');
   const text = document.getElementById('profilePlanText');
   const btn = document.getElementById('profilePlanBtn');
+
+  // DNA VISUAL: Diferenciação drástica entre PAGO e CORTESIA
+  if (IS_FREE_VERSION) {
+    document.documentElement.style.setProperty('--brand-primary', '#f59e0b'); // Dourado
+    document.documentElement.style.setProperty('--brand-secondary', '#d97706');
+    document.body.classList.add('is-cortesia');
+  } else {
+    document.documentElement.style.setProperty('--brand-primary', '#3b82f6'); // Azul Padrão
+    document.documentElement.style.setProperty('--brand-secondary', '#2563eb');
+    document.body.classList.remove('is-cortesia');
+  }
 
   if (IS_FREE_VERSION) {
     if (badge) {
